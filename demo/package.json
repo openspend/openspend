@@ -1,0 +1,16 @@
+{
+    "name": "openspend-demo",
+    "version": "0.1.0",
+    "scripts": {
+        "dev": "vite dev",
+        "build": "vite build"
+    },
+    "dependencies": {
+        "preact": "^10.27.2",
+        "react-icons": "^5.5.0"
+    },
+    "devDependencies": {
+        "@preact/preset-vite": "^2.10.2",
+        "vite": "^7.2.4"
+    }
+}
