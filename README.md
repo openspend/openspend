@@ -1,3 +1,5 @@
+![Open Spend Logo](https://github.com/openspend/openspend/blob/main/logo.png?raw=true)
+
 # Open Spend 💸
 
 How about a payment gateway without a middle man like PayPal, Stripe, 2Checkout, etc?
