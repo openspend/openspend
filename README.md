@@ -1,3 +1,5 @@
+[<img src="https://i.imgur.com/oRFWBv7.png" height="80px" />](https://buymeacoffee.com/umrashrf)
+
 ![Open Spend Logo](https://github.com/openspend/openspend/blob/main/logo.png?raw=true)
 
 # Open Spend 💸
