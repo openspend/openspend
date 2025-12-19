@@ -54,11 +54,11 @@ export function App() {
                     <div>
                         <h3 class="mt-6 font-bold text-gray-500">Transfer to Email</h3>
                         <div class="relative flex items-center justify gap-2">
-                            <p class="text-xl text-gray-700 font-bold w-full">umrashrf+openspend@gmail.com</p>
+                            <p class="text-xl text-gray-700 font-bold w-full">openspend@nuehon.resend.app</p>
                             <button class="fixed right-5 hover:bg-gray-300 rounded"
                                 title="Copy Email"
                                 onClick={e => {
-                                    alert("umrashrf+openspend@gmail.com");
+                                    alert("openspend@nuehon.resend.app");
                                 }}>
                                 <MdCopyAll size={24} />
                             </button>
