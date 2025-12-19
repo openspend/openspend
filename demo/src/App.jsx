@@ -58,7 +58,7 @@ export function App() {
                             <button class="fixed right-5 hover:bg-gray-300 rounded"
                                 title="Copy Email"
                                 onClick={e => {
-                                    alert("customer_name@your_website.com");
+                                    alert("umrashrf+openspend@gmail.com");
                                 }}>
                                 <MdCopyAll size={24} />
                             </button>
