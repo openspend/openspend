@@ -49,12 +49,12 @@ export function App() {
                         Send an online bank transfer
                     </p>
 
-                    <h2 class="mt-4 text-3xl font-semibold">$19.99</h2>
+                    <h2 class="mt-4 text-3xl font-semibold">$5.00</h2>
 
                     <div>
                         <h3 class="mt-6 font-bold text-gray-500">Transfer to Email</h3>
                         <div class="relative flex items-center justify gap-2">
-                            <p class="text-xl text-gray-700 font-bold w-full">customer_name@your_website.com</p>
+                            <p class="text-xl text-gray-700 font-bold w-full">umrashrf+openspend@gmail.com</p>
                             <button class="fixed right-5 hover:bg-gray-300 rounded"
                                 title="Copy Email"
                                 onClick={e => {

@@ -1,5 +1,7 @@
 [<img src="https://i.imgur.com/oRFWBv7.png" height="80px" />](https://buymeacoffee.com/umrashrf)
 
+Or click Pay below and follow the instructions to buy me a coffee!
+
 ![Open Spend Logo](https://github.com/openspend/openspend/blob/main/logo.png?raw=true)
 
 # Open Spend 💸
