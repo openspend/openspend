@@ -4,6 +4,13 @@ import { MdCopyAll } from 'react-icons/md';
 export function App() {
     const [open, setOpen] = useState(false);
 
+    const cancel = () => {
+        setOpen(false);
+        setTimeout(() => {
+            alert("Payment cancelled");
+        }, 500);
+    };
+
     return (
         <div class="w-full flex flex-col items-center">
             <button
@@ -33,7 +40,7 @@ export function App() {
                 <div class="relative p-6 text-center">
                     <button
                         class="fixed top-0 right-0 mt-5 mr-4 px-4 py-2 text-gray-400 bg-gray-100 hover:bg-gray-300 rounded transition"
-                        onClick={() => setOpen(false)}
+                        onClick={() => cancel()}
                     >
                         X
                     </button>
