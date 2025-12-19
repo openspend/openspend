@@ -8,7 +8,7 @@ export function App() {
         setOpen(false);
         setTimeout(() => {
             alert("Payment cancelled");
-        }, 500);
+        }, 250);
     };
 
     return (
