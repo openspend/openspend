@@ -1,6 +1,15 @@
+import { useEffect } from 'preact/hooks';
+import { useLocation } from 'preact-iso';
+
 import AuthPanel from '../components/AuthPanel';
 
 export default function Home({ user }) {
+    const location = useLocation();
+
+    useEffect(() => {
+        location.route('/invoice');
+    }, []);
+
     return (
         <main className="text-gray-800">
             {/* HERO */}

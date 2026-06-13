@@ -36,12 +36,14 @@ export const up = async (pgm) => {
     // --- Create triggers for each table ---
     await createRealtimeTrigger('users');
     await createRealtimeTrigger('reviews');
+    await createRealtimeTrigger('invoices');
 };
 
 export const down = async (pgm) => {
     // Drop all triggers explicitly
     await pgm.sql(`DROP TRIGGER IF EXISTS users_change ON "users" CASCADE;`);
     await pgm.sql(`DROP TRIGGER IF EXISTS reviews_change ON "reviews" CASCADE;`);
+    await pgm.sql(`DROP TRIGGER IF EXISTS invoices_change ON "invoices" CASCADE;`);
 
     // Drop shared trigger function
     await pgm.sql(`DROP FUNCTION IF EXISTS notify_table_change() CASCADE;`);

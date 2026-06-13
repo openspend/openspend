@@ -16,6 +16,7 @@ import rulesModuleStorage from './postbase_storage_rules.js';
 import rulesModuleRTDB from './postbase_rtdb_rules.js';
 import { authenticate } from './middlewares/auth_middleware.js';
 import { auth } from './auth.js';
+import { emailRouter } from './src/email.js';
 
 const POSTBASE_STORAGE_ROOT_DIR = process.env.POSTBASE_STORAGE_ROOT_DIR || '/var/www/html/www.yourwebsite.com/uploads';
 const POSTBASE_STORAGE_PUBLIC_URL = process.env.POSTBASE_STORAGE_PUBLIC_URL || 'http://localhost:5173/uploads';
@@ -52,6 +53,8 @@ router.use(
         rulesModule: rulesModuleRTDB,
     })
 );
+
+router.use('/email', emailRouter);
 
 // For local testing
 // app.use(cors({

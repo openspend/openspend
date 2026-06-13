@@ -24,6 +24,19 @@ export default {
             delete: () => false,
         },
 
+        /** === INVOICES === */
+        invoices: {
+            // Allow read and update if the auth.id matches the userId (row id)
+            read: () => true,
+            update: () => true,
+
+            // Allow create if auth.id == resource.userId
+            create: () => true,
+
+            // Delete not allowed
+            delete: () => false,
+        },
+
         /** === REVIEWS === */
         reviews: {
             // Everyone can read
@@ -52,55 +65,6 @@ export default {
             // No updates or deletes
             update: () => false,
             delete: () => false,
-        },
-
-        /** === DEV_REQUESTS === */
-        dev_requests: {
-            // Authenticated user can read their own requests
-            read: (req, res) =>
-                H.isAuth(req) && req.auth.id === String(res.user_id || res.userId),
-
-            // Authenticated user can create their own requests with valid data
-            create: (req, res) => {
-                if (!H.isAuth(req)) return false;
-                const d = req.resource || {};
-                const isString = (v) => typeof v === 'string' && v.trim().length > 0;
-
-                return (
-                    req.auth.id === String(d.user_id || d.userId) &&
-                    isString(d.name) &&
-                    isString(d.email) &&
-                    isString(d.description)
-                );
-            },
-
-            // No updates or deletes
-            update: () => false,
-            delete: () => false,
-        },
-
-        /** === API_KEYS === */
-        api_keys: {
-            // Read / update / delete allowed only for owner
-            read: (req, res) => {
-                if (!res) return H.isAuth(req);
-                return H.isAuth(req) && req.auth.id === String(res.user_id || res.userId);
-            },
-            update: (req, res) =>
-                H.isAuth(req) && req.auth.id === String(res.user_id || res.userId),
-            delete: (req, res) =>
-                H.isAuth(req) && req.auth.id === String(res.user_id || res.userId),
-
-            // Create: must be owner and valid key string with length >= 16
-            create: (req, res) => {
-                if (!H.isAuth(req)) return false;
-                const d = req.resource || {};
-                const isString = (v) => typeof v === 'string' && v.trim().length >= 16;
-                return (
-                    req.auth.id === String(d.user_id || d.userId) &&
-                    isString(d.key)
-                );
-            },
         },
 
         /** === BILLING === */

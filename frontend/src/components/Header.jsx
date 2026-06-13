@@ -14,14 +14,14 @@ export default function Header({ user }) {
     return (
         <header className={`w-full z-40 transition-all ${scrolled ? 'bg-white shadow' : 'bg-transparent'} backdrop-blur`}>
             <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-                <a href="/" className="text-2xl font-extrabold text-blue-600">Postbase Demo</a>
-                <nav className="hidden md:flex gap-8 text-sm font-medium">
-                    <a href="#better-auth" className="hover:text-blue-600">BetterAuth</a>
-                    <a href="#familiar-api" className="hover:text-blue-600">Familiar API</a>
-                    <a href="#why" className="hover:text-blue-600">Why Postbase?</a>
+                <a href="/" className="text-2xl font-extrabold text-blue-600">OpenSpend</a>
+                <nav className="flex gap-8 text-sm font-medium">
+                    <a href="/invoice" className="hover:text-blue-600">Create New</a>
+                    <a href="/search" className="hover:text-blue-600">Search</a>
+                    <a href="/settings" className="hover:text-blue-600">Settings</a>
                 </nav>
 
-                <div className="flex items-center gap-4">
+                {/* <div className="flex items-center gap-4">
                     {user ? (
                         <div className="relative">
                             <button onClick={() => setMenu(!menu)} className="flex items-center gap-2 px-3 py-1 border rounded-md hover:bg-gray-50">
@@ -47,7 +47,7 @@ export default function Header({ user }) {
                             Sign In
                         </a>
                     )}
-                </div>
+                </div> */}
             </div>
         </header>
     );

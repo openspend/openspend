@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'preact/hooks';
-import { Router } from 'preact-router';
+import { LocationProvider, Router, Route } from 'preact-iso';
 import Header from './components/Header';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import { getSession } from './auth';
+import { Invoice } from './pages/Invoice';
+import { Pay } from './pages/Pay';
+import { Search } from './pages/Search';
 
 export default function App() {
     const [user, setUser] = useState(null);
@@ -22,15 +25,21 @@ export default function App() {
         <div className="min-h-screen bg-gray-50 text-gray-800">
             <Header user={user} />
 
-            <Router>
-                <Home path="/" user={user} />
-                <Dashboard path="/dashboard" user={user} />
-                <Login path="/login" user={user} />
-            </Router>
+            <LocationProvider>
+                <Router>
+                    <Route path="/" component={Home} user={user} />
+                    <Route path="/dashboard" component={Dashboard} user={user} />
+                    <Route path="/login" component={Login} user={user} />
+                    <Route path="/invoice" component={Invoice} user={user} />
+                    <Route path="/invoice/:invoiceId" component={Invoice} user={user} />
+                    <Route path="/pay/:invoiceId" component={Pay} user={user} />
+                    <Route path="/search" component={Search} user={user} />
+                </Router>
+            </LocationProvider>
 
             <footer className="bg-white border-t py-6 mt-10">
                 <div className="container mx-auto text-center text-sm text-gray-500">
-                    © {new Date().getFullYear()} Postbase Demo
+                    © {new Date().getFullYear()} OpenSpend
                 </div>
             </footer>
         </div>

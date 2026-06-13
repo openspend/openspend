@@ -54,15 +54,18 @@ export const up = async (pgm) => {
 
     // Create the Firestore-style JSONB collections
     await createJsonTable('users');
+    await createJsonTable('invoices');
     await createJsonTable('reviews');
 
     // Optional: indexes on JSONB ids
     pgm.createIndex('users', 'id');
+    pgm.createIndex('invoices', 'id');
     pgm.createIndex('reviews', 'id');
 };
 
 export const down = async (pgm) => {
     pgm.dropTable('users');
+    pgm.dropTable('invoices');
     pgm.dropTable('reviews');
     pgm.sql(`DROP FUNCTION IF EXISTS set_updated_at() CASCADE;`);
 };
