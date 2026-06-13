@@ -1,266 +1,29 @@
-[<img src="https://img.shields.io/badge/Launch%20Date-02%20Nov%202025-blue" />](https://github.com/umrashrf/postbase/graphs/contributors?all=1)
-
 [<img src="https://i.imgur.com/oRFWBv7.png" height="80px" />](https://buymeacoffee.com/umrashrf)
 
-![Home Page Screenshot](https://github.com/umrashrf/postbase/blob/main/assets/img/HomePageScreenshot.png?raw=true)
+Or scroll down to the demo and follow the instructions to buy me a coffee!
 
-<img alt="Node.js" src="https://github.com/umrashrf/postbase/raw/main/assets/img/node.js_logo.png?raw=true" height="100"> <img alt="Express.js" src="https://github.com/umrashrf/postbase/raw/main/assets/img/expresjs.png?raw=true" height="100"> <img alt="PostgreSQL" src="https://github.com/umrashrf/postbase/raw/main/assets/img/postgres.png?raw=true" height="100"> <img alt="Better-Auth" src="https://github.com/umrashrf/postbase/raw/main/assets/img/better-auth-logo-light.4b03f444.png?raw=true" height="100"> <img alt="Let's Encrypt" src="https://github.com/umrashrf/postbase/raw/main/assets/img/letsencrypt-logo-horizontal.png?raw=true" height="100">
+![Open Spend Logo](https://github.com/openspend/openspend/blob/main/logo.png?raw=true)
 
-# Postbase
+# Open Spend 💸
 
-Drop-in replacement for Firebase, production grade, open source, localhost first and self-hosted using Node.js, Express.js, BetterAuth and PostgreSQL (JSONB)
+How about a payment gateway without a middle man like PayPal, Stripe, 2Checkout, etc?
 
-Firebase 💔 | Supabase 💔 | Postbase ❤️
+## Demo
 
-Demo Preact app is included !
+![Screencast](https://github.com/openspend/openspend/raw/main/screencast.gif)
 
-# Table of Contents
+## What is OpenSpend?
 
-* [Postbase](#postbase)
-   * [Features](#features)
-      * [Authentication Features](#authentication-features)
-      * [Database Features](#database-features)
-      * [File Upload / Storage](#file-upload--storage)
-      * [Admin &amp; System](#admin--system)
-   * [Made with Postbase](#made-with-postbase)
-      * [1. <a href="https://www.afood.website" rel="nofollow">AFood.Website</a>](https://www.afood.website)
-      * [2. <a href="https://www.mamiride.com" rel="nofollow">Mamiride.com</a>](https://www.mamiride.com)
-      * [3. <a href="https://www.provitres.ca" rel="nofollow">Provitres.ca</a>](https://www.provitres.ca)
-      * [4. <a href="https://email.riamu.io" rel="nofollow">email.riamu.io</a>](https://email.riamu.io)
-   * [Disclaimer !!!](#disclaimer-)
-   * [Getting Started](#getting-started)
-   * [Vision](#vision)
-   * [Docs](#docs)
-      * [Getting Started](#getting-started-1)
-      * [Authentication (Firebase Like API)](#authentication-firebase-like-api)
-         * [Sign Up](#sign-up)
-         * [Sign In](#sign-in)
-         * [auth.onAuthStateChanged, auth.currentUser and auth.currentUser.getIdToken()](#authonauthstatechanged-authcurrentuser-and-authcurrentusergetidtoken)
-      * [Document Storage (Firestore Like API)](#document-storage-firestore-like-api)
-         * [Collections, get/set/where/orderBy/limit/delete](#collections-getsetwhereorderbylimitdelete)
-         * [Admin Client](#admin-client)
-      * [Todo](#todo)
-      * [In Progress](#in-progress)
-      * [Done](#done)
-   * [Star History](#star-history)
+OpenSpend is an open-source, free-to-use, self-hosted payment gateway for your next app, project, or business. It lets end users send money using their online banking directly to businesses using their online banking app or website. And businesses can check live and instantly whether the money has been deposited or not. 
 
-## Features
+By using OpenSpend, businesses are responsible for compliance; therefore, it also provides written Refund policy, Terms and Conditions and Privacy Policy templates. It is the responsibility of the business using OpenSpend to ensure compliance with its local and international laws.
 
-### Authentication Features
+The idea is that people use online banking to send money (pay) to businesses, and OpenSpend automates the process by going into the business email inbox and clicking the link and following the steps to deposit the money.
 
-- [x] Sign Up ➕👤
-- [x] Sign In 🔑
-- [x] Sign in with Google/Facebook/Apple etc. ➕👤
-- [x] Forgot Password ❓🔐
-- [x] Reset Password ♻️🔐
-- [x] Email Verification Email ✉️✔️
-- [x] Phone Verification Codes 📱✔️
-- [x] Delete User 👤❌
+There are many banks around the world, and most countries have some sort of online money transfer by email or phone.
 
-Special thanks to [@better-auth/better-auth](https://github.com/better-auth/better-auth)
+The trick is to use a different email address for every user/customer like payments+customer_id@their_website.com here customer_id changes for every customer. But all the emails get to the same inbox and the script using selenium should automate the bank login and making the deposit. After a successful or fail deposit, a webhook is called.
 
-### Database Features
+Read more how Resend's webhook can be used for this purpose https://resend.com/docs/dashboard/receiving/introduction
 
-- [x] NoSQL Document Storage 🗄️
-- [x] Collections 📁
-- [x] Query functions 🔍
-- [x] CRUD Functions 🛠️
-- [x] Security Rules 🛡️
-- [x] Database Migrations 🛢️ → 🛢️
-
-### File Upload / Storage
-
-- [x] File Upload (https) 📄⬆️
-- [x] File Serving (https) 📄⬇️
-- [x] Security Rules 🛡️
-
-### Admin & System
-
-- [x] Admin SDK 👑🗄️
-- [x] Nginx Config 🧱
-- [x] Systemd Service ⚙️
-- [x] Git Push Deployment ⬆️🐙
-
-## Made with Postbase
-
-### 1. [AFood.Website](https://www.afood.website)
-
-![AFood.Website](https://github.com/umrashrf/postbase/blob/main/assets/img/websites-made-with-postbase/AFood.Website.png?raw=1)
-
-### 2. [Mamiride.com](https://www.mamiride.com)
-
-![Mamiride.com](https://github.com/umrashrf/postbase/blob/main/assets/img/websites-made-with-postbase/Mamiride.com.png?raw=1)
-
-### 3. [Provitres.ca](https://www.provitres.ca)
-
-![Provitres.ca](https://github.com/umrashrf/postbase/blob/main/assets/img/websites-made-with-postbase/Provitres.ca.png?raw=1)
-
-### 4. [email.riamu.io](https://email.riamu.io)
-
-![email.riamu.io](https://github.com/umrashrf/postbase/blob/main/assets/img/websites-made-with-postbase/email.riamu.io.png?raw=1)
-
-## Disclaimer !!!
-
-Brand new project launched 02 Nov 2025, this is boiler plate but working! Expect heavy changes coming every few hours until stable
-
-The project started with the help of LLMs but over time heavy use of LLMs stopped due to large uncontrolled changes.
-
-This is the only original and official Postbase. There are Postbase copycats claiming to be official replacement. Do your research!
-
-## Getting Started
-
-To create a new project with Postbase, all you have to do is clone this repo.
-
-```
-git clone https://github.com/umrashrf/postbase.git
-```
-
-then start backend and frontend servers and modify as needed!
-
-Both backend/ and frontend/ folders have their own README.md
-
-## Vision
-
-Make a drop-in replacement library for Firebase (keep same naming convention). So users can switch between Firebase and Postbase as they please.
-
-## Docs
-
-### Getting Started
-
-```javascript
-/* Or npm instal @postbase/client
- * import { initializeApp } from '@postbase/client/compat/firebase/app'
- */
-import { initializeApp } from "../lib/postbase/compat/firebase/app";
-import { getFirestore } from "../lib/postbase/compat/firebase/firestore/lite";
-import { getStorage } from "../lib/postbase/compat/firebase/storage";
-import { getDatabase } from "../lib/postbase/compat/firebase/database";
-
-const firebaseConfig = {
-    baseUrl: import.meta.env.VITE_API_BASE,
-};
-
-const app = initializeApp(firebaseConfig);
-
-export const db = getFirestore(app);
-export const storage = getStorage(app);
-export const rtdbClient = getDatabase(app);
-```
-
-### Authentication (Firebase Like API)
-
-#### Sign Up
-
-```javascript
-import { getAuth, createUserWithEmailAndPassword } from "./auth";
-
-const auth = getAuth();
-
-const userCredential = await createUserWithEmailAndPassword(auth, 'email', 'password');
-```
-
-#### Sign In
-
-```javascript
-import { getAuth, signInWithEmailAndPassword } from "./auth";
-
-const auth = getAuth();
-
-const userCredential = await signInWithEmailAndPassword(auth, 'email', 'password');
-```
-
-#### auth.onAuthStateChanged, auth.currentUser and auth.currentUser.getIdToken()
-
-```javascript
-import { auth } from './auth';
-
-auth.onAuthStateChanged(user => {
-    // user
-    auth.currentUser === user // true
-});
-
-const token = auth.currentUser.getIdToken();
-// token for API authentication and rules engine
-```
-
-Tip: Add this link https://email.riamu.io to your Sign Up page for your users to get a free email address
-
-### Document Storage (Firestore Like API)
-
-#### Collections, get/set/where/orderBy/limit/delete
-
-```javascript
-import { db } from "./postbase";
-
-const data = await db.collection('users').doc('docId').get();
-// getDoc(collection(db, 'users'), 'docId')
-
-await db.collection('users').set({ name: "Umair" }, { merge: true });
-// getDoc(collection(db, 'users'), 'docId')
-
-const reference = db.collection('users')
-    .where('name', '==', 'Umair')
-    .orderBy('createdAt')
-    .limit(5);
-// const reference = getDocs(query(collection(db, 'users'), where('name', '==', 'Umair'), orderBy('createdAt')))
-
-const docs = await reference.get();
-// const docs = await getDocs(reference);
-
-reference.onSnapshot(docs => {
-    // use docs
-});
-// onSnapshot(reference, docs => {
-// 
-// })
-```
-
-#### Admin Client
-
-```javascript
-import { createAdminClient } from './lib/postbase/compat/admin.js';
-import { authClient } from './admin/auth.js';
-
-const admin = createAdminClient({ authClient });
-
-const user = await admin.auth().getUser(userId);
-
-const doc = await admin.firestore().collection('collection').doc('docId').get();
-```
-
-### Todo
-- [ ] Firebase Functions Replacement (Backend API can be used for now)
-
-Important functions to replicate:
-
-```
-# https://firebase.google.com/docs/functions/schedule-functions
-const { onSchedule } = require("firebase-functions/scheduler");
-
-# https://firebase.google.com/docs/functions/callable
-const { onCall } = require("firebase-functions/https");
-
-# https://firebase.google.com/docs/functions/get-started
-const { onRequest } = require("firebase-functions/https");
-```
-
-- [ ] Firebase Storage Replacement (Support S3 and other backend)
-
-### In Progress
-- [ ] Testing
-
-### Done
-- [x] Firebase Authentication Replacement
-- [x] Firebase Firestore Replacement
-- [x] Firebase Storage Replacement (Filebased Only)
-- [x] Firebase Storage Replacement (HTTPS Based Upload)
-
-## Star History
-
-<a href="https://star-history.com/#umrashrf/postbase&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=umrashrf/postbase&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=umrashrf/postbase&type=Date" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=umrashrf/postbase&type=Date" />
-  </picture>
-</a>
+To login to bank website, business owner setup OpenSpend to use an .env file with predefined username and password. It doesn't need to work for all the banks to begin with. Just one widely used bank. It will be tricky to use banks which enforce two-factor authentication (2FA).
