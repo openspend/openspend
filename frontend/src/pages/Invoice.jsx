@@ -179,8 +179,8 @@ export function Invoice() {
                     </button>
                 </div>
                 <div class="mt-10 flex flex-col gap-3 px-2 text-3xl">
-                    <p key={`tvq-${amount}`} class="text-center">TPS: ${(amount * TVQ).toFixed(2)}</p>
-                    <p key={`tps-${amount}`} class="text-center">TPQ: ${(amount * TPS).toFixed(2)}</p>
+                    <p key={`tvq-${amount}`} class="text-center">TVQ: ${(amount * TVQ).toFixed(2)}</p>
+                    <p key={`tps-${amount}`} class="text-center">TPS: ${(amount * TPS).toFixed(2)}</p>
                     <p key={`total-${amount}`} class="text-center">Total: ${amount && (parseFloat(amount) + (amount * TVQ) + (amount * TPS)).toFixed(2)}</p>
                 </div>
             </form>
