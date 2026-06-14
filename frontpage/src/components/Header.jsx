@@ -18,7 +18,7 @@ export default function Header({ user }) {
                 <nav className="flex gap-8 text-lg font-medium items-center justify-center">
                     <a href="#kiss" className="text-blue-600 hover:underline">KISS</a>
                     <a href="#payg" className="text-blue-600 hover:underline">Simple Pricing (PAYG)</a>
-                    <a href="#" className="text-blue-600 hover:underline">Settings</a>
+                    <a href="#why" className="text-blue-600 hover:underline">Why OpenSpend?</a>
                 </nav>
 
                 <div className="flex items-center gap-4">
