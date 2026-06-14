@@ -33,8 +33,8 @@ export default function Home({ user }) {
                     </div>
 
                     <div className="flex flex-col gap-2 relative">
-                        <div className="bg-gray-900 text-green-400 font-mono text-sm rounded-lg shadow-lg p-6 overflow-x-auto">
-
+                        <div className="flex items-center justify-center bg-gray-200 text-green-400 font-mono text-sm rounded-lg shadow-lg p-6 overflow-x-auto">
+                            <img src="/assets/img/Screenshot1.jpg" width="50%" />
                         </div>
                     </div>
                 </div>
@@ -51,12 +51,13 @@ export default function Home({ user }) {
                         </p>
 
                         <div className="mt-8 flex gap-4">
+
                         </div>
                     </div>
 
                     <div className="relative">
-                        <div className="bg-gray-900 text-green-400 font-mono text-sm rounded-lg shadow-lg p-6 overflow-x-auto">
-
+                        <div className="flex items-center justify-center bg-gray-200 text-green-400 font-mono text-sm rounded-lg shadow-lg p-6 overflow-x-auto">
+                            <img src="/assets/img/Screenshot2.jpg" width="50%" />
                         </div>
                     </div>
                 </div>
@@ -83,14 +84,8 @@ export default function Home({ user }) {
                     </div>
 
                     <div className="flex flex-col gap-2 relative">
-                        <div className="bg-gray-900 text-green-400 font-mono text-sm rounded-lg shadow-lg p-6">
-
-                        </div>
-                        <div className="bg-gray-900 text-green-400 font-mono text-sm rounded-lg shadow-lg p-6 overflow-x-auto">
-
-                        </div>
-                        <div className="bg-gray-900 text-green-400 font-mono text-sm rounded-lg shadow-lg p-6 overflow-x-auto">
-
+                        <div className="flex items-center justify-center bg-gray-200 text-green-400 font-mono text-sm rounded-lg shadow-lg p-6 overflow-x-auto">
+                            <img src="/assets/img/Screenshot4.jpg" width="50%" />
                         </div>
                     </div>
                 </div>
