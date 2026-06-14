@@ -99,16 +99,20 @@ export function Invoice() {
 
         const uniqueIdentifier = generateSixDigitAlphanumeric();
 
+        let amountDecimal = amount;
+        if (typeof amountDecimal === 'string') {
+            amountDecimal = parseFloat(amount);
+        }
         const formData = {
             email: `DASVILLEDA+${uniqueIdentifier}@GMAIL.COM`,
             currency: 'CAD',
             currencySymbol: '$',
-            amount,
-            tax: parseFloat(((amount * TVQ) + (amount * TPS)).toFixed(2)),
+            amount: amountDecimal,
+            tax: parseFloat(((amountDecimal * TVQ) + (amountDecimal * TPS)).toFixed(2)),
             uniqueIdentifier,
             timestamp: Timestamp.now(),
             status: INVOICE_STATUS.DRAFT,
-        }
+        };
 
         const invoiceDoc = await db.collection('invoices').add(formData);
         const invoiceId = invoiceDoc.id;
