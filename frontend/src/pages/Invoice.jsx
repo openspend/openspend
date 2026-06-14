@@ -197,7 +197,7 @@ export function Invoice() {
                     <div class="mt-6 text-xl">
                         <div class="grid grid-cols-2 gap-2 relative">
                             <p class="text-right">Security Question:</p>
-                            <p class="text-left font-bold">Code</p>
+                            <p class="text-center font-semibold">Code</p>
                             <button class="absolute top-0 bottom-0 right-0 hover:bg-gray-300 rounded"
                                 title="Copy Question"
                                 onClick={e => copyToClipboard(e, "Code")}>
@@ -206,7 +206,7 @@ export function Invoice() {
                         </div>
                         <div class="grid grid-cols-2 gap-2 relative">
                             <p class="text-right">Security Answer:</p>
-                            <p class="text-left font-bold">{invoice?.uniqueIdentifier}</p>
+                            <p class="text-center font-semibold">{invoice?.uniqueIdentifier}</p>
                             <button class="absolute top-0 bottom-0 right-0 hover:bg-gray-300 rounded"
                                 title="Copy Answer"
                                 onClick={e => copyToClipboard(e, invoice?.uniqueIdentifier)}>
