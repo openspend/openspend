@@ -10,6 +10,7 @@ export function Pay() {
     const { params } = useRoute();
     const [open, setOpen] = useState(false);
     const [invoice, setInvoice] = useState({
+        name: '',
         email: '',
         currency: 'CAD',
         currencySymbol: '$',
@@ -162,6 +163,18 @@ export function Pay() {
                             onClick={e => copyToClipboard(e, invoice?.amount + invoice?.tax)}>
                             <MdCopyAll size={24} />
                         </button>
+                    </div>
+
+                    <div>
+                        <h3 class="mt-6 font-bold text-gray-500">Name</h3>
+                        <div class="relative flex items-center justify gap-2">
+                            <p class="text-lg text-gray-700 font-bold w-full">{invoice?.name}</p>
+                            <button class="absolute right-0 hover:bg-gray-300 rounded"
+                                title="Copy Email"
+                                onClick={e => copyToClipboard(e, invoice?.name)}>
+                                <MdCopyAll size={24} />
+                            </button>
+                        </div>
                     </div>
 
                     <div>

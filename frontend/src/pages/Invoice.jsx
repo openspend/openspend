@@ -47,6 +47,7 @@ export function Invoice() {
     const qrInstance = useRef(null);
     const [showQrCode, setShowQrCode] = useState(false);
     const [invoice, setInvoice] = useState({
+        name: '',
         email: '',
         currency: 'CAD',
         currencySymbol: '$',
@@ -60,6 +61,7 @@ export function Invoice() {
     useEffect(() => {
         if (!params?.invoiceId) {
             setInvoice({
+                name: '',
                 email: '',
                 currency: 'CAD',
                 currencySymbol: '$',
@@ -107,6 +109,7 @@ export function Invoice() {
             amountDecimal = parseFloat(amount);
         }
         const formData = {
+            name: 'CasaZero',
             email: `DASVILLEDA+${uniqueIdentifier}@GMAIL.COM`,
             currency: 'CAD',
             currencySymbol: '$',
