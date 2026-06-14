@@ -104,7 +104,7 @@ export function Invoice() {
             currency: 'CAD',
             currencySymbol: '$',
             amount,
-            tax: (amount + (amount * TVQ) + (amount * TPS)).toFixed(2),
+            tax: parseFloat(((amount * TVQ) + (amount * TPS)).toFixed(2)),
             uniqueIdentifier,
             timestamp: Timestamp.now(),
             status: INVOICE_STATUS.DRAFT,
@@ -161,9 +161,9 @@ export function Invoice() {
                     </button>
                 </div>
                 <div class="mt-10 flex flex-col gap-3 px-2 text-3xl">
-                    <p class="text-center">TPS: ${(amount * TVQ).toFixed(2)}</p>
-                    <p class="text-center">TPQ: ${(amount * TPS).toFixed(2)}</p>
-                    <p class="text-center">Total: ${(amount + (amount * TVQ) + (amount * TPS)).toFixed(2)}</p>
+                    <p key={`tvq-${amount}`} class="text-center">TPS: ${(amount * TVQ).toFixed(2)}</p>
+                    <p key={`tps-${amount}`} class="text-center">TPQ: ${(amount * TPS).toFixed(2)}</p>
+                    <p key={`total-${amount}`} class="text-center">Total: ${amount && (parseFloat(amount) + (amount * TVQ) + (amount * TPS)).toFixed(2)}</p>
                 </div>
             </form>
 
