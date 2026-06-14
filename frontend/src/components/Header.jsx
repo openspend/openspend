@@ -21,7 +21,7 @@ export default function Header({ user }) {
                     <a href="/settings" className="text-blue-600 hover:underline">Settings</a>
                 </nav>
 
-                {/* <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4">
                     {user ? (
                         <div className="relative">
                             <button onClick={() => setMenu(!menu)} className="flex items-center gap-2 px-3 py-1 border rounded-md hover:bg-gray-50">
@@ -47,7 +47,7 @@ export default function Header({ user }) {
                             Sign In
                         </a>
                     )}
-                </div> */}
+                </div>
             </div>
         </header>
     );
