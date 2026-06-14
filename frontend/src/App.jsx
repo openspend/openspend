@@ -8,6 +8,7 @@ import { getSession } from './auth';
 import { Invoice } from './pages/Invoice';
 import { Pay } from './pages/Pay';
 import { Search } from './pages/Search';
+import { Settings } from './pages/Settings';
 
 export default function App() {
     const [user, setUser] = useState(null);
@@ -34,6 +35,7 @@ export default function App() {
                     <Route path="/invoice/:invoiceId" component={Invoice} user={user} />
                     <Route path="/pay/:invoiceId" component={Pay} user={user} />
                     <Route path="/search" component={Search} user={user} />
+                    <Route path="/settings" component={Settings} user={user} />
                 </Router>
             </LocationProvider>
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 
-export function Search() {
+export function Settings() {
     const [code, setCode] = useState("")
     const [email, setEmail] = useState("");
     const [currency, setCurrency] = useState("CAD");
@@ -32,22 +32,8 @@ export function Search() {
 
     return (
         <div class="w-full flex flex-col items-center">
-            <p class="mt-4 mb-10 text-4xl text-center">Search</p>
-
-            <form onSubmit={search}>
-                <div class="flex gap-2">
-                    <input name="q"
-                        placeholder="Search Keywords or Invoice Identifier"
-                        class="min-w-40 md:min-w-100 border-1 p-4"
-                        onChange={e => setAmount(e.target.value)} />
-
-                    <button
-                        type="submit"
-                        class="px-4 py-2 bg-blue-600 text-3xl text-white rounded hover:bg-blue-700 transition">
-                        Search
-                    </button>
-                </div>
-            </form>
+            <p class="mt-4 mb-10 text-4xl text-center">Settings</p>
+            <p>TO-DO</p>
         </div>
     );
 }
