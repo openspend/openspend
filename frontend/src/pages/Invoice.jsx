@@ -90,7 +90,9 @@ export function Invoice() {
             };
             setInvoice(invoice);
             setAmount(invoice.amount);
-            generateQrCode(invoice.id);
+            if (invoice.status === INVOICE_STATUS.DRAFT) {
+                generateQrCode(invoice.id);
+            }
         })();
 
     }, [params?.invoiceId]);
