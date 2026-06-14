@@ -25,7 +25,7 @@ function generateSixDigitAlphanumeric() {
 export function Invoice() {
     const { params } = useRoute();
     const location = useLocation();
-    const [amount, setAmount] = useState(0.01);
+    const [amount, setAmount] = useState(15);
     const qrCodeRef = useRef(null);
     const qrInstance = useRef(null);
     const [showQrCode, setShowQrCode] = useState(false);
@@ -40,7 +40,26 @@ export function Invoice() {
     });
 
     useEffect(() => {
-        if (!params?.invoiceId) return;
+        if (!params?.invoiceId) {
+            setInvoice({
+                email: '',
+                currency: 'CAD',
+                currencySymbol: '$',
+                amount: 0.01,
+                uniqueIdentifier: '',
+                timestamp: new Date(),
+                status: INVOICE_STATUS.DRAFT,
+            });
+            setAmount(15);
+
+            if (qrInstance?.current) {
+                qrInstance.current.clear();
+            }
+
+            setShowQrCode(false);
+
+            return;
+        }
 
         (async () => {
             const doc = await db.collection('invoices')
@@ -106,19 +125,19 @@ export function Invoice() {
 
     return (
         <div class="w-full flex flex-col items-center">
-            <p class="mb-10 text-4xl text-center">New Invoice</p>
+            <p class="mt-4 mb-10 text-4xl text-center">New Invoice</p>
 
             <form onSubmit={createDraftInvoice}>
-                <div class="flex gap-2">
+                <div class="flex gap-2 px-2">
                     <span class="text-6xl">$</span><input name="amount"
                         type="number" min="0.01" step="0.01" inputmode="decimal"
                         placeholder="Amount (15)" value={amount}
-                        class="border-1 p-4"
+                        class="border-1 text-xl p-4 max-w-40"
                         onChange={e => setAmount(e.target.value)} />
 
                     <button
                         type="submit"
-                        class="px-4 py-2 bg-blue-600 text-3xl text-white rounded hover:bg-blue-700 transition">
+                        class="px-4 py-2 bg-blue-600 text-2xl text-white rounded hover:bg-blue-700 transition">
                         Create
                     </button>
                 </div>
