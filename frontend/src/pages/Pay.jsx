@@ -41,6 +41,20 @@ export function Pay() {
 
     }, [params?.invoiceId]);
 
+    useEffect(() => {
+        document.addEventListener("keyup", function (event) {
+            if (event.key === "Escape") {
+                cancel();
+            }
+        });
+
+        return () => document.removeEventListener("keyup", function (event) {
+            if (event.key === "Escape") {
+                cancel();
+            }
+        });
+    }, []);
+
     const copyToClipboard = async (event, textToCopy) => {
         try {
             const target = event.currentTarget || event.target;
