@@ -54,8 +54,13 @@ export function Pay() {
         }
     };
 
-    const cancel = () => {
+    const cancel = async () => {
         setOpen(false);
+        const invoiceDoc = await db.collection('invoices').doc(params?.invoiceId).get();
+        setInvoice({
+            id: invoiceDoc.id,
+            ...invoiceDoc.data(),
+        });
     };
 
     const sendInvoiceByEmail = async () => {
@@ -76,14 +81,14 @@ export function Pay() {
                 <p class="text-4xl">Status: <span class="text-green-600">Paid</span></p>
             </div>
 
-            <div class="mb-10 text-4xl text-center">
+            <div class="mb-10 text-center">
                 <form onSubmit={sendInvoiceByEmail}>
-                    <p class="mb-4">Need a receipt?</p>
+                    <p class="mb-4 text-4xl">Need a receipt?</p>
                     <div class="flex gap-2">
                         <input name="email"
                             type="email"
                             placeholder="Type your email address" value={email}
-                            class="border-1 p-4 min-w-120"
+                            class="border-1 p-4 md:min-w-120"
                             onChange={e => setEmail(e.target.value)} />
 
                         <button
