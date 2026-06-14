@@ -4,6 +4,22 @@ import QRCode from 'easyqrcodejs';
 import { db } from '../postbase';
 import { Timestamp } from '../../lib/postbase/db';
 
+const TAXES = [
+    {
+        name: 'TVQ',
+        value: '9.975%',
+        percent: 9.975 / 100,
+    },
+    {
+        name: 'TPS',
+        value: '5%',
+        percent: 5 / 100,
+    }
+];
+
+const TVQ = TAXES[0].percent;
+const TPS = TAXES[1].percent;
+
 export const INVOICE_STATUS = {
     DRAFT: 'draft',
     PAID: 'paid',
@@ -33,7 +49,8 @@ export function Invoice() {
         email: '',
         currency: 'CAD',
         currencySymbol: '$',
-        amount: 0.01,
+        amount: 15,
+        tax: 2.25,
         uniqueIdentifier: '',
         timestamp: new Date(),
         status: INVOICE_STATUS.DRAFT,
@@ -45,7 +62,8 @@ export function Invoice() {
                 email: '',
                 currency: 'CAD',
                 currencySymbol: '$',
-                amount: 0.01,
+                amount: 15,
+                tax: 2.25,
                 uniqueIdentifier: '',
                 timestamp: new Date(),
                 status: INVOICE_STATUS.DRAFT,
@@ -86,6 +104,7 @@ export function Invoice() {
             currency: 'CAD',
             currencySymbol: '$',
             amount,
+            tax: (amount + (amount * TVQ) + (amount * TPS)).toFixed(2),
             uniqueIdentifier,
             timestamp: Timestamp.now(),
             status: INVOICE_STATUS.DRAFT,
@@ -140,6 +159,11 @@ export function Invoice() {
                         class="px-4 py-2 bg-blue-600 text-2xl text-white rounded hover:bg-blue-700 transition">
                         Create
                     </button>
+                </div>
+                <div class="mt-10 flex flex-col gap-3 px-2 text-3xl">
+                    <p class="text-center">TPS: ${(amount * TVQ).toFixed(2)}</p>
+                    <p class="text-center">TPQ: ${(amount * TPS).toFixed(2)}</p>
+                    <p class="text-center">Total: ${(amount + (amount * TVQ) + (amount * TPS)).toFixed(2)}</p>
                 </div>
             </form>
 

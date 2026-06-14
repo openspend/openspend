@@ -13,7 +13,8 @@ export function Pay() {
         email: '',
         currency: 'CAD',
         currencySymbol: '$',
-        amount: 0.01,
+        amount: 15,
+        tax: 2.25,
         uniqueIdentifier: '',
         timestamp: new Date(),
         status: INVOICE_STATUS.DRAFT,
@@ -136,10 +137,10 @@ export function Pay() {
                     </p>
 
                     <div class="mt-4 relative flex items-center justify-center">
-                        <h2 class="text-3xl font-semibold">{invoice?.currencySymbol}{invoice?.amount} {invoice?.currency}</h2>
+                        <h2 class="text-3xl font-semibold">{invoice?.currencySymbol}{invoice?.amount + invoice?.tax} {invoice?.currency}</h2>
                         <button class="absolute top-0 bottom-0 right-0 hover:bg-gray-300 rounded"
                             title="Copy Amount"
-                            onClick={e => copyToClipboard(e, invoice?.amount)}>
+                            onClick={e => copyToClipboard(e, invoice?.amount + invoice?.tax)}>
                             <MdCopyAll size={24} />
                         </button>
                     </div>
