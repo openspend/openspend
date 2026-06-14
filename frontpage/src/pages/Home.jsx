@@ -126,13 +126,6 @@ export default function Home({ user }) {
                     </div>
                 </div>
             </section>
-
-            {/* AUTH (optional section near footer) */}
-            <section className="bg-gray-50 py-16">
-                <div className="max-w-lg mx-auto px-6">
-                    <AuthPanel user={user} />
-                </div>
-            </section>
         </main>
     );
 }
