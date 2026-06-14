@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'preact/hooks';
-import { signOut } from '../auth';
+//import { signOut } from '../auth';
 
 export default function Header({ user }) {
-    const [menu, setMenu] = useState(false);
+    //const [menu, setMenu] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -13,12 +13,12 @@ export default function Header({ user }) {
 
     return (
         <header className={`w-full z-40 transition-all ${scrolled ? 'bg-white shadow' : 'bg-transparent'} backdrop-blur`}>
-            <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-                <a href="/" className="text-2xl font-extrabold text-blue-600">OpenSpend</a>
-                <nav className="flex gap-8 text-sm font-medium">
-                    <a href="/invoice" className="hover:text-blue-600">Create New</a>
-                    <a href="/search" className="hover:text-blue-600">Search</a>
-                    <a href="/settings" className="hover:text-blue-600">Settings</a>
+            <div className="flex flex-col md:flex-row items-center gap-1 max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+                <a href="/" className="text-2xl font-extrabold text-blue-600 mb-4 md:mb-0">OpenSpend</a>
+                <nav className="flex gap-8 text-lg font-medium">
+                    <a href="/invoice" className="text-blue-600 hover:underline">Create New</a>
+                    <a href="/search" className="text-blue-600 hover:underline">Search</a>
+                    <a href="/settings" className="text-blue-600 hover:underline">Settings</a>
                 </nav>
 
                 {/* <div className="flex items-center gap-4">
