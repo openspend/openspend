@@ -1,0 +1,657 @@
+// // Minimal client SDK for the generic CRUD API.
+// // Usage example:
+//   import { getDB } from './postbase.js';
+//   const db = getDB({ baseUrl: 'https://api.example.com/api' });
+//   const posts = db.collection('posts');
+//   await posts.add({ title: 'hi' });
+//   const doc = await posts.doc('123').get();
+//
+// // You can also use references
+// const userRef = db.collection('users').doc('alovelace');
+// await userRef.set({ name: 'Ada Lovelace' });
+
+// await db.collection('reviews').doc('r1').set({
+//   rating: 5,
+//   reviewer: userRef
+// });
+
+// const review = await db.collection('reviews').doc('r1').get();
+
+// console.log(review.reviewer instanceof DocumentReference); // ✅ true
+// const user = await review.reviewer.get();
+// console.log(user.name); // "Ada Lovelace"
+
+function toJsonOrThrow(res) {
+    if (!res.ok) {
+        return res.json().then(j => { throw j; });
+    }
+    return res.json();
+}
+
+export function getDB({
+    baseUrl = '/api/db',
+    defaultHeaders = {},
+    getAuthToken = null, // 👈 optional async token resolver
+} = {}) {
+    return new Database(baseUrl.replace(/\/$/, ''), defaultHeaders, getAuthToken);
+}
+
+class Database {
+    constructor(baseUrl, defaultHeaders, getAuthToken) {
+        this.baseUrl = baseUrl;
+        this.defaultHeaders = defaultHeaders;
+        this.getAuthToken = getAuthToken;
+    }
+
+    collection(name) {
+        return new CollectionReference(this, name);
+    }
+
+    async getHeaders() {
+        const headers = { ...this.defaultHeaders };
+        if (typeof this.getAuthToken === 'function') {
+            try {
+                const token = await this.getAuthToken();
+                if (token) headers['Authorization'] = `Bearer ${token}`;
+            } catch (err) {
+                console.warn('getAuthToken failed', err);
+            }
+        }
+        return headers;
+    }
+}
+
+class CollectionReference {
+    constructor(db, name, parentPath = null) {
+        this.db = db;
+        this.name = name;
+        this.parentPath = parentPath; // e.g., "users/u1"
+    }
+
+    get fullPath() {
+        return this.parentPath ? `${this.parentPath}/${encodeURIComponent(this.name)}` : encodeURIComponent(this.name);
+    }
+
+    doc(id) {
+        return new DocumentReference(this.db, this.name, id, this.parentPath);
+    }
+
+    collection(subName) {
+        return new CollectionReference(this.db, subName, this.fullPath);
+    }
+
+    async add(data) {
+        const url = `${this.db.baseUrl}/${this.fullPath}`;
+        const headers = await this.db.getHeaders();
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json', ...headers },
+            body: JSON.stringify(serializeRefs(data))
+        });
+        const json = await toJsonOrThrow(res);
+        const _data = json.data;
+        if (_data && _data.hasOwnProperty('id')) {
+            return this.doc(_data.id);
+        }
+        return _data;
+    }
+
+    /** Directly get all docs (no filters) */
+    async get() {
+        const query = new QueryBuilder(this);
+        const data = await query.get();
+        const { docs } = data;
+        // If there are no query filters, wrap in QuerySnapshot
+        if (query._filters.length === 0 && query._order.length === 0 && !query._limit) {
+            return new QuerySnapshot(docs);
+        }
+        // Otherwise, return array of DocumentSnapshot as before
+        return data;
+    }
+
+    /** Start a query builder chain */
+    where(field, op, value) {
+        return new QueryBuilder(this).where(field, op, value);
+    }
+
+    /** Optional syntactic sugar — allow orderBy/limit without where() */
+    orderBy(field, dir = 'asc') {
+        return new QueryBuilder(this).orderBy(field, dir);
+    }
+
+    limit(n) {
+        return new QueryBuilder(this).limit(n);
+    }
+}
+
+
+/** 
+ * Recursively convert DocumentReference instances to JSON-safe { _type: 'ref', path } objects
+ */
+function serializeRefs(obj) {
+    if (obj instanceof DocumentReference) {
+        return { _type: 'ref', path: obj.fullPath };
+    }
+
+    //NEW: If Timestamp instance, send canonical structure
+    if (obj instanceof Timestamp) {
+        return obj.toString();
+    }
+
+    if (Array.isArray(obj)) return obj.map(serializeRefs);
+
+    if (obj && typeof obj === 'object') {
+        const out = {};
+        for (const [k, v] of Object.entries(obj)) {
+            out[k] = serializeRefs(v);
+        }
+        return out;
+    }
+
+    return obj;
+}
+
+/**
+ * Recursively restore { _type:'ref', path } objects back to DocumentReference instances.
+ */
+function deserializeRefs(db, obj) {
+    if (Array.isArray(obj)) {
+        return obj.map(v => deserializeRefs(db, v));
+    }
+
+    if (obj && typeof obj === 'object') {
+        // Detect PostgreSQL TIMESTAMPTZ returned as strings
+        if (isIsoDateString(obj)) {
+            return Timestamp.fromPostgres(obj);
+        }
+
+        if (obj._type === 'ref' && obj.path) {
+            const parts = obj.path.split('/');
+            let ref = db.collection(parts[0]).doc(parts[1]);
+            for (let i = 2; i < parts.length; i += 2) {
+                ref = ref.collection(parts[i]).doc(parts[i + 1]);
+            }
+            return ref;
+        }
+
+        const out = {};
+        for (const [k, v] of Object.entries(obj)) {
+            out[k] = deserializeRefs(db, v);
+        }
+        return out;
+    }
+
+    //If a primitive ISO string is received, convert it
+    if (isIsoDateString(obj)) {
+        return Timestamp.fromPostgres(obj);
+    }
+
+    return obj;
+}
+
+class DocumentsSnapshot {
+    constructor(docs) {
+        this.docs = docs; // array of DocumentSnapshot
+    }
+
+    forEach(callback) {
+        this.docs.forEach(callback);
+    }
+
+    map(callback) {
+        return this.docs.map(callback);
+    }
+
+    get empty() {
+        return this.docs.length === 0;
+    }
+
+    get size() {
+        return this.docs.length;
+    }
+}
+
+class DocumentSnapshot {
+    constructor(id, data, path, db) {
+        this.id = decodeURIComponent(id);
+        this._path = path.split('/').map(decodeURIComponent).join('/');
+        this._db = db;
+        this._data = data;
+    }
+
+    data() {
+        return this._data;
+    }
+
+    get ref() {
+        const parts = this._path.split('/');
+        let ref = this._db.collection(parts[0]).doc(parts[1]);
+        for (let i = 2; i < parts.length; i += 2) {
+            ref = ref.collection(parts[i]).doc(parts[i + 1]);
+        }
+        return ref;
+    }
+
+    get path() {
+        return this._path;
+    }
+
+    get exists() {
+        return !!this._data;
+    }
+}
+
+class DocumentReference {
+    constructor(db, collectionName, id, parentPath = null) {
+        this.db = db;
+        this.collectionName = collectionName;
+        this.id = id;
+        this.parentPath = parentPath;
+    }
+
+    /** Full document path, e.g. "users/u1/posts/p2" */
+    get fullPath() {
+        const base = this.parentPath ? `${this.parentPath}/${encodeURIComponent(this.collectionName)}` : encodeURIComponent(this.collectionName);
+        return `${base}/${encodeURIComponent(this.id)}`;
+    }
+
+    /** Allow chaining subcollections under this document */
+    collection(subName) {
+        return new CollectionReference(this.db, subName, this.fullPath);
+    }
+
+    async get() {
+        const url = `${this.db.baseUrl}/${this.fullPath}`;
+        const headers = await this.db.getHeaders();
+        const res = await fetch(url, { headers });
+        if (!res.ok) {
+            const errorData = await res.json();
+            console.error(`HTTP error! Status: ${res.status}, Details: ${JSON.stringify(errorData)}`);
+            if (errorData.hasOwnProperty('error')) {
+                return new DocumentSnapshot(this.id, null, this.fullPath, this.db);
+            }
+        }
+        const json = await toJsonOrThrow(res);
+        const data = deserializeRefs(this.db, json.data || {});
+        return new DocumentSnapshot(this.id, data, this.fullPath, this.db);
+    }
+
+    async set(data, opts = {}) {
+        const url = `${this.db.baseUrl}/${this.fullPath}`;
+        const headers = await this.db.getHeaders();
+
+        // If merge=true, fetch existing data first and merge locally
+        let finalData = data;
+        if (opts.merge) {
+            try {
+                const existing = await this.get();
+                finalData = { ...(existing.data() || {}), ...data };
+            } catch (err) {
+                // If doc doesn't exist, just create it
+                finalData = data;
+            }
+        }
+
+        const res = await fetch(url, {
+            method: 'PUT',
+            headers: { 'content-type': 'application/json', ...headers },
+            body: JSON.stringify(serializeRefs(finalData)),
+        });
+        const json = await toJsonOrThrow(res);
+        return json.data;
+    }
+
+    async update(data) {
+        const url = `${this.db.baseUrl}/${this.fullPath}`;
+        const headers = await this.db.getHeaders();
+        const res = await fetch(url, {
+            method: 'PATCH',
+            headers: { 'content-type': 'application/json', ...headers },
+            body: JSON.stringify(serializeRefs(data)),
+        });
+        const json = await toJsonOrThrow(res);
+        return json.data;
+    }
+
+    async delete() {
+        const url = `${this.db.baseUrl}/${this.fullPath}`;
+        const headers = await this.db.getHeaders();
+        const res = await fetch(url, { method: 'DELETE', headers });
+        const json = await toJsonOrThrow(res);
+        return json.data;
+    }
+
+    onSnapshot(callback, errorCallback) {
+        // Reuse the existing real-time query system
+        const q = new QueryBuilder(this.collection(this.id));
+        q._filters.push({ field: "__id", op: "==", value: this.id });
+
+        return q.onSnapshot((querySnap) => {
+            const docSnap = querySnap.docs[0] ||
+                new DocumentSnapshot(this.id, null, this.fullPath, this.db);
+            callback(docSnap);
+        }, errorCallback);
+    }
+}
+
+/* Query builder helpers */
+export function query(collectionRef, ...clauses) {
+    // returns a structured query object for backend: { filters: [...], order: [...], limit, offset }
+    const q = new QueryBuilder(collectionRef);
+    for (const c of clauses) {
+        if (c instanceof QueryBuilder) q.mergeFrom(c);
+    }
+    return q;
+}
+
+class QuerySnapshot {
+    constructor(docs) {
+        this.docs = docs; // array of DocumentSnapshot
+    }
+
+    // Optional helper like Firestore
+    forEach(callback) {
+        this.docs.forEach(callback);
+    }
+
+    map(callback) {
+        return this.docs.map(callback);
+    }
+
+    get empty() {
+        return this.docs.length === 0;
+    }
+
+    get size() {
+        return this.docs.length;
+    }
+}
+
+class QueryBuilder {
+    constructor(collectionRef) {
+        this.collectionRef = collectionRef;
+        this._filters = [];
+        this._order = [];
+        this._limit = undefined;
+        this._offset = undefined;
+
+        // New cursor fields
+        this._startAt = undefined;
+        this._startAfter = undefined;
+        this._endAt = undefined;
+        this._endBefore = undefined;
+    }
+
+    where(field, op, value) {
+        let _value = value;
+        if (typeof value === 'object'
+            && value !== null
+            && value.hasOwnProperty('_type')
+            && value._type === 'timestamp'
+            && 'toString' in value) {
+            _value = value.toString();
+        } else if (value instanceof DocumentReference) {
+            _value = { _type: 'ref', path: value.fullPath };
+        }
+        this._filters.push({ field, op, value: _value });
+        return this;
+    }
+
+    orderBy(field, dir = 'asc') {
+        this._order.push({ field, dir });
+        return this;
+    }
+
+    limit(n) {
+        this._limit = n;
+        return this;
+    }
+
+    offset(n) {
+        this._offset = n;
+        return this;
+    }
+
+    // 🔽 Pagination methods (Firestore-like)
+    startAt(cursor) {
+        this._startAt = this._normalizeCursor(cursor);
+        return this;
+    }
+
+    startAfter(cursor) {
+        this._startAfter = this._normalizeCursor(cursor);
+        return this;
+    }
+
+    endAt(cursor) {
+        this._endAt = this._normalizeCursor(cursor);
+        return this;
+    }
+
+    endBefore(cursor) {
+        this._endBefore = this._normalizeCursor(cursor);
+        return this;
+    }
+
+    // Internal helper — Firestore allows passing either value or doc snapshot
+    _normalizeCursor(cursor) {
+        if (!cursor) return null;
+        if (typeof cursor === 'object' && cursor.id) {
+            // Likely a document snapshot or data with an id
+            return { _type: 'cursorRef', path: cursor._path || `${this.collectionRef.fullPath}/${cursor.id}` };
+        }
+        // For raw scalar values (like numeric sort fields)
+        return cursor;
+    }
+
+    build() {
+        const out = {};
+        if (this._filters.length) out.filters = this._filters;
+        if (this._order.length) out.order = this._order;
+        if (typeof this._limit !== 'undefined') out.limit = this._limit;
+        if (typeof this._offset !== 'undefined') out.offset = this._offset;
+
+        if (this.collectionRef.parentPath) {
+            // parentPath = "messages/A"
+            const parts = this.collectionRef.parentPath.split('/');
+            const parentTable = parts[0];
+            const parentId = parts[1];
+            out.parent = {
+                collectionName: parentTable,
+                id: parentId,
+                path: `${this.collectionRef.parentPath}`
+            };
+        }
+
+        return out;
+    }
+
+    async get() {
+        const url = `${this.collectionRef.db.baseUrl}/${this.collectionRef.fullPath}/query`;
+        const headers = await this.collectionRef.db.getHeaders();
+
+        const queryBody = this.build();
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json', ...headers },
+            body: JSON.stringify(queryBody),
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json();
+            console.error(`HTTP error! Status: ${res.status}, Details: ${JSON.stringify(errorData)}`);
+            if (errorData.hasOwnProperty('error')) {
+                return new DocumentsSnapshot([]);
+            }
+        }
+
+        const json = await toJsonOrThrow(res);
+
+        // Map each document to a DocumentSnapshot
+        const docs = (json.data || []).map((doc) => {
+            const data = deserializeRefs(this.collectionRef.db, doc.data || doc || {});
+            return new DocumentSnapshot(doc.id, data, `${this.collectionRef.fullPath}/${doc.id}`, this.collectionRef.db);
+        });
+        return new DocumentsSnapshot(docs);
+    }
+
+    onSnapshot(callback, errorCallback) {
+        const self = this;
+
+        const wsUrl = this.collectionRef.db.baseUrl
+            .replace(/^https/, 'wss')
+            .replace(/^http/, 'ws')
+            + `/${this.collectionRef.fullPath}/stream`;
+
+        //console.log(`Requesting a new web socket connection`, wsUrl);
+        const ws = new WebSocket(wsUrl);
+
+        ws.onopen = (event) => {
+            //console.log('ws.onopen', event);
+            const queryBody = this.build();
+            //console.log('Sending query...', queryBody);
+            ws.send(JSON.stringify(queryBody)); // send query definition once
+            //console.log('Sent query success');
+        };
+
+        ws.onmessage = (event) => {
+            //console.log('ws.onmessage');
+            try {
+                const msg = JSON.parse(event.data);
+                if (msg.type === 'init' || msg.type === 'change') {
+                    let data = msg.data;
+                    if (!Array.isArray(msg.data)) {
+                        // nested data found, meaning we have op and id as well
+                        data = [msg.data];
+                    }
+                    const docs = (data || []).map(doc => {
+                        const data = deserializeRefs(this.collectionRef.db, doc.data || doc);
+                        if (msg.data.hasOwnProperty('op')) {
+                            data._data = msg.data;
+                        }
+                        return new DocumentSnapshot(
+                            doc.id,
+                            data,
+                            `${this.collectionRef.fullPath}/${doc.id}`,
+                            this.collectionRef.db
+                        );
+                    });
+                    callback(new QuerySnapshot(docs), msg.type);
+                } else if (msg.type === 'error') {
+                    errorCallback(msg);
+                }
+            } catch (err) {
+                if (typeof errorCallback === 'function') errorCallback(err);
+                else console.error('onSnapshot parsing error:', err);
+            }
+        };
+
+        ws.onerror = (err) => {
+            //console.log('ws.onerror');
+            if (typeof errorCallback === 'function') errorCallback(err);
+            else console.error('onSnapshot websocket error:', err);
+        };
+
+        ws.onclose = event => {
+            //console.log('ws.onclose', event);
+        };
+
+        return () => ws.close(); // return unsubscribe function
+    }
+
+    mergeFrom(other) {
+        this._filters.push(...(other._filters || []));
+        this._order.push(...(other._order || []));
+        if (other._limit) this._limit = other._limit;
+        if (other._offset) this._offset = other._offset;
+        if (other._startAt) this._startAt = other._startAt;
+        if (other._startAfter) this._startAfter = other._startAfter;
+        if (other._endAt) this._endAt = other._endAt;
+        if (other._endBefore) this._endBefore = other._endBefore;
+        return this;
+    }
+}
+
+/* Basic helpers similar to Firestore types */
+
+function isIsoDateString(v) {
+    return (
+        typeof v === 'string' &&
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(v)
+    );
+}
+
+export class Timestamp {
+    constructor(seconds, nanoseconds) {
+        this._type = 'timestamp';
+        this.seconds = seconds;
+        this.nanoseconds = nanoseconds;
+    }
+
+    /** Create from JS Date */
+    static fromDate(date) {
+        const millis = date.getTime();
+        const seconds = Math.floor(millis / 1000);
+        const nanoseconds = (millis % 1000) * 1e6;
+        return new Timestamp(seconds, nanoseconds);
+    }
+
+    /** Now */
+    static now() {
+        return Timestamp.fromDate(new Date());
+    }
+
+    /** Create from Firestore-style seconds + nanos */
+    static fromSeconds(seconds, nanoseconds = 0) {
+        return new Timestamp(seconds, nanoseconds);
+    }
+
+    /** Create from Postgres ISO datetime string */
+    static fromPostgres(isoString) {
+        const date = new Date(isoString);
+
+        if (isNaN(date.getTime())) {
+            throw new Error("Invalid Postgres ISO datetime: " + isoString);
+        }
+
+        // Parse fractional seconds manually (Postgres can include microseconds)
+        const match = isoString.match(/\.(\d+)(?=Z|[+-]\d\d:?\d\d$)/);
+        let nanos = 0;
+
+        if (match) {
+            let fractional = match[1];                 // e.g., "789123"
+            if (fractional.length > 9) {
+                fractional = fractional.slice(0, 9);   // trim to nanoseconds
+            }
+            nanos = parseInt((fractional + "000000000").slice(0, 9), 10);
+        }
+
+        const seconds = Math.floor(date.getTime() / 1000);
+
+        return new Timestamp(seconds, nanos);
+    }
+
+    /** Convert back to JS Date */
+    toDate() {
+        return new Date(this.seconds * 1000 + Math.floor(this.nanoseconds / 1e6));
+    }
+
+    /** Milliseconds since epoch */
+    toMillis() {
+        return this.seconds * 1000 + Math.floor(this.nanoseconds / 1e6);
+    }
+
+    /** ISO string */
+    toString() {
+        return this.toDate().toISOString();
+    }
+}
+
+export const FieldValue = {
+    increment: (by = 1) => ({ _op: 'increment', by }),
+    serverTimestamp: () => ({ _op: 'serverTimestamp' }),
+};
+
+export const FieldPath = (path) => ({ _fieldPath: path });
+
+export const documentId = () => "__id";

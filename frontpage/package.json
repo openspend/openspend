@@ -1,0 +1,25 @@
+{
+    "name": "@postbase/frontend",
+    "version": "0.1.1",
+    "author": "Umair Ashraf",
+    "url": "http://github.com/umrashrf/postbase",
+    "scripts": {
+        "dev": "vite --host 0.0.0.0",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@tailwindcss/vite": "^4.1.11",
+        "better-auth": "^1.3.34",
+        "easyqrcodejs": "^4.6.2",
+        "preact": "^10.27.0",
+        "preact-iso": "^2.9.1",
+        "preact-router": "^4.1.2",
+        "react-icons": "^5.6.0",
+        "tailwindcss": "^4.1.11"
+    },
+    "devDependencies": {
+        "@preact/preset-vite": "^2.9.3",
+        "vite": "^6.0.4"
+    }
+}
