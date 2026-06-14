@@ -76,6 +76,9 @@ export default function Home({ user }) {
                             $0.329 per dollar of invoice
                         </p>
                         <p className="mt-2 text-lg text-gray-600 max-w-lg">
+                            Volume pricing as low as $0.01
+                        </p>
+                        <p className="mt-2 text-lg text-gray-600 max-w-lg">
                             Start with as low as $10
                         </p>
 
