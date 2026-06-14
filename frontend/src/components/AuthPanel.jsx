@@ -1,9 +1,27 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
+import { useLocation } from 'preact-iso';
 import { signUp, signIn, signOut } from '../auth';
 
+function useQuery() {
+    const location = useLocation();
+    return new URLSearchParams(location.url.split('?')[1]);
+}
+
 export default function AuthPanel({ user }) {
+    const query = useQuery();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [redirectUrl, setRedirectUrl] = useState('/dashboard');
+
+    useEffect(() => {
+        const redirectUrl = query.get('redirectUrl');
+
+        if (redirectUrl && redirectUrl.length > 0) {
+            setRedirectUrl(redirectUrl);
+        } else {
+            setRedirectUrl('/dashboard');
+        }
+    }, []);
 
     const loginWithGoogle = async () => {
         alert("Finish setting up Sign in with Google. Learn more at https://www.better-auth.com/docs/authentication/google")
@@ -18,19 +36,18 @@ export default function AuthPanel({ user }) {
             <h3 className="font-semibold">Account</h3>
             {!user ? (
                 <div className="mt-3 space-y-3">
-                    <button onClick={loginWithGoogle} className="w-full bg-red-600 text-white py-2 rounded">Sign in with Google</button>
+                    {/* <button onClick={loginWithGoogle} className="w-full bg-red-600 text-white py-2 rounded">Sign in with Google</button> */}
 
                     <div className="flex gap-2">
                         <input className="flex-1 border p-2 rounded w-full" type="text" placeholder="email" value={email} onInput={e => setEmail(e.target.value)} />
                         <input className="flex-1 border p-2 rounded w-full" type="password" placeholder="password" value={password} onInput={e => setPassword(e.target.value)} />
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex justify-center gap-2">
                         <button className="px-3 py-2 border rounded"
                             onClick={async () => {
-                                alert("Setup PostgreSQL (migration, connection string). Learn more at https://www.better-auth.com/docs/installation#create-database-tables");
                                 await signUp.email(
-                                    { email, password, name: email.split('@', 1)[0], callbackURL: "/dashboard" },
+                                    { email, password, name: email.split('@', 1)[0], callbackURL: redirectUrl },
                                     {
                                         onRequest: (ctx) => {
                                             //show loading
@@ -50,8 +67,7 @@ export default function AuthPanel({ user }) {
                         </button>
                         <button className="px-3 py-2 border rounded"
                             onClick={async () => {
-                                alert("Setup PostgreSQL (migration, connection string). Learn more at https://www.better-auth.com/docs/installation#create-database-tables");
-                                await signIn.email({ email, password, callbackURL: '/dashboard' });
+                                await signIn.email({ email, password, callbackURL: redirectUrl });
                             }}>
                             Login
                         </button>

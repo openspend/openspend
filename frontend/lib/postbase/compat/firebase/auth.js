@@ -98,8 +98,7 @@ export function createFirebaseAuthClient(postbaseAuthClientWithBetterAuthFunctio
         if (authToken) {
             window.sessionStorage.removeItem('authToken');
         }
-        // at the end because it can trigger navigation
-        auth.signOut.apply(this, []);
+        auth.signOut();
     };
 
     return {

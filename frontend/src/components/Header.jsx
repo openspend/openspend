@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'preact/hooks';
-//import { signOut } from '../auth';
+import { getAuth, signOut } from '../auth';
 
 export default function Header({ user }) {
-    //const [menu, setMenu] = useState(false);
+    const [menu, setMenu] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -25,20 +25,17 @@ export default function Header({ user }) {
                     {user ? (
                         <div className="relative">
                             <button onClick={() => setMenu(!menu)} className="flex items-center gap-2 px-3 py-1 border rounded-md hover:bg-gray-50">
-                                <img src={user.image} className="w-8 h-8 rounded-full" alt="profile" />
+                                <img src={user.image ?? '/assets/img/blank-profile-picture-960_720.webp'} className="w-8 h-8 rounded-full" alt="profile" />
                                 <span className="hidden sm:inline text-sm">{user.name || user.email}</span>
                             </button>
                             {menu && (
                                 <div className="absolute right-0 mt-2 bg-white border rounded-md shadow-lg w-48 z-50">
                                     <a href="/dashboard" className="block px-4 py-2 hover:bg-gray-50">Dashboard</a>
                                     <a href="/billing" className="block px-4 py-2 hover:bg-gray-50">Billing</a>
-                                    <button onClick={() => signOut({
-                                        fetchOptions: {
-                                            onSuccess: () => {
-                                                location.href = import.meta.env.VITE_FRONTEND_URL;
-                                            },
-                                        },
-                                    })} className="w-full text-left px-4 py-2 hover:bg-gray-50 cursor-pointer">Logout</button>
+                                    <button onClick={() => {
+                                        signOut(getAuth());
+                                        location.href = import.meta.env.VITE_FRONTEND_URL;
+                                    }} className="w-full text-left px-4 py-2 hover:bg-gray-50 cursor-pointer">Logout</button>
                                 </div>
                             )}
                         </div>
