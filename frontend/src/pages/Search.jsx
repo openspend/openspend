@@ -38,7 +38,7 @@ export function Search() {
                 <div class="flex gap-2">
                     <input name="q"
                         placeholder="Search Keywords or Invoice Identifier"
-                        class="min-w-100 border-1 p-4"
+                        class="min-w-40 md:min-w-100 border-1 p-4"
                         onChange={e => setAmount(e.target.value)} />
 
                     <button
