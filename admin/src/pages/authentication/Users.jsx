@@ -1,9 +1,14 @@
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 import { authClient } from "../../auth";
 import { formatDateTime } from "../../common/formatDateTime";
+import { db } from "../../postbase";
+import { documentId } from "@postbase/frontend/db";
 
 export default function Users({ user }) {
     const [users, setUsers] = useState(null);
+    const [showEditUser, setShowEditUser] = useState(false);
+    const [userObjs, setUserObjs] = useState(null);
+    const userRef = useRef(null);
 
     useEffect(() => {
         (async () => {
@@ -18,6 +23,46 @@ export default function Users({ user }) {
             setUsers(data.users);
         })();
     }, []);
+
+    useEffect(() => {
+        if (!users || users.length === 0) return;
+
+        (async () => {
+            try {
+                const userids = users.map(u => u.id);
+                const snapshot = await db
+                    .collection('users')
+                    .where(documentId(), 'IN', userids)
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                if (snapshot.size !== 0) {
+                    setUserObjs(snapshot.map(doc => {
+                        return {
+                            id: doc.id,
+                            ...doc.data(),
+                        };
+                    }));
+                }
+            } catch (err) {
+            }
+        })();
+    }, [users]);
+
+    const addBalance = async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        const { balance: newBalance } = Object.fromEntries(formData.entries());
+
+        await db.collection('users')
+            .doc(userRef?.current.id)
+            .set(
+                { balance: (userRef?.current.balance || 0) + parseInt(newBalance) },
+                { merge: true });
+
+        userRef.current = null;
+        setShowEditUser(false);
+    };
 
     return <div class="p-4">
         <h2 class="text-3xl">Authentication</h2>
@@ -43,7 +88,7 @@ export default function Users({ user }) {
         </div>
 
         <div>
-            {users && users.length > 0 &&
+            {userObjs && userObjs.length > 0 &&
                 <div class="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
                     <div class="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 p-4">
                         <div>
@@ -105,7 +150,7 @@ export default function Users({ user }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {users.map(u => <tr class="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium">
+                            {userObjs.map(u => <tr class="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium">
                                 <td class="w-4 p-4">
                                     <div class="flex items-center">
                                         <input id="table-checkbox-52" type="checkbox" value="" class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft" />
@@ -124,12 +169,12 @@ export default function Users({ user }) {
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
-                                        <div class="h-2.5 w-2.5 rounded-full bg-success me-2"></div> {formatDateTime(u.createdAt)}
+                                        <div class="h-2.5 w-2.5 rounded-full bg-success me-2"></div> {formatDateTime(u?.createdAt.toDate())}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
-                                        <div class="h-2.5 w-2.5 rounded-full bg-success me-2"></div> {formatDateTime(u.updatedAt)}
+                                        <div class="h-2.5 w-2.5 rounded-full bg-success me-2"></div> {formatDateTime(u?.updatedAt.toDate())}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
@@ -138,30 +183,42 @@ export default function Users({ user }) {
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <a href="#" type="button" data-modal-target="editUserModal" data-modal-show="editUserModal" class="font-medium text-fg-brand hover:underline">Edit user</a>
+                                    <button type="button" data-modal-target="editUserModal" data-modal-show="editUserModal" class="font-medium text-fg-brand hover:underline cursor-pointer"
+                                        onClick={e => {
+                                            userRef.current = u;
+                                            setShowEditUser(true);
+                                        }}>Edit user</button>
                                 </td>
                             </tr>)}
                         </tbody>
                     </table>
 
-                    <div id="editUserModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                        <div class="relative p-4 w-full max-w-md max-h-full">
+                    {showEditUser && <div id="editUserModal" tabindex="-1" aria-hidden="true" class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)]">
+                        <div class="relative p-4 w-[600px] max-w-md max-h-full bg-black text-white top-20 left-[calc(50%-250px)]">
 
                             <div class="relative bg-neutral-primary-soft border border-default rounded-base shadow-sm p-4 md:p-6">
 
                                 <div class="flex items-center justify-between border-b border-default pb-4 md:pb-5">
                                     <h3 class="text-lg font-medium text-heading">
-                                        Create new product
+                                        Edit user
                                     </h3>
-                                    <button type="button" class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-9 h-9 ms-auto inline-flex justify-center items-center" data-modal-hide="editUserModal">
+                                    <button type="button" class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-9 h-9 ms-auto inline-flex justify-center items-center cursor-pointer" data-modal-hide="editUserModal"
+                                        onClick={e => {
+                                            userRef.current = null;
+                                            setShowEditUser(false);
+                                        }}>
                                         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" /></svg>
                                         <span class="sr-only">Close modal</span>
                                     </button>
                                 </div>
 
-                                <form action="#">
+                                <form action="#" onSubmit={addBalance}>
                                     <div class="grid gap-4 grid-cols-2 py-4 md:py-6">
                                         <div class="col-span-2">
+                                            <label for="name" class="block mb-2.5 text-sm font-medium text-heading">Balance</label>
+                                            <input type="number" min="10" step="10" name="balance" id="balance" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm text-black rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body placeholder:text-black" value="10" required="" />
+                                        </div>
+                                        {/* <div class="col-span-2">
                                             <label for="name" class="block mb-2.5 text-sm font-medium text-heading">Name</label>
                                             <input type="text" name="name" id="name" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="Bonnie Green" required="" />
                                         </div>
@@ -180,18 +237,24 @@ export default function Users({ user }) {
                                         <div class="col-span-2">
                                             <label for="biography" class="block mb-2.5 text-sm font-medium text-heading">Biography</label>
                                             <textarea id="biography" rows="4" class="block bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full p-3.5 shadow-xs placeholder:text-body" placeholder="Write a short biography here"></textarea>
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div class="flex items-center space-x-4 border-t border-default pt-4 md:pt-6">
-                                        <button type="submit" class="inline-flex items-center  text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
-                                            Update user
+                                        <button type="submit" class="inline-flex items-center text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
+                                            Add
                                         </button>
-                                        <button data-modal-hide="crud-modal" type="button" class="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">Cancel</button>
+                                        <button data-modal-hide="crud-modal" type="button" class="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
+                                            onClick={e => {
+                                                userRef.current = null;
+                                                setShowEditUser(false);
+                                            }}>
+                                            Cancel
+                                        </button>
                                     </div>
                                 </form>
                             </div>
                         </div>
-                    </div>
+                    </div>}
                 </div>
             }
         </div>

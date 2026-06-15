@@ -14,7 +14,25 @@ export default {
         /** === USERS === */
         users: {
             // Allow read and update if the auth.id matches the userId (row id)
-            read: (req, res) => H.isAuth(req) && (req.auth.id === String(res.id) || req.user?.role === "admin"),
+            read: (req, res) => H.isAuth(req) && (
+                req.auth.id === String(res?.id)
+                || req.user?.role === "admin"
+                || (process.env.hasOwnProperty("VITE_BRAND_ID_USD") && req.auth.id === process.env.VITE_BRAND_ID_USD)
+                || (process.env.hasOwnProperty("VITE_BRAND_ID_CAD") && req.auth.id === process.env.VITE_BRAND_ID_CAD)
+            ),
+
+            update: (req, res) => H.isAuth(req) && req.auth.id === String(res.id),
+
+            // Allow create if auth.id == resource.userId
+            create: (req, res) => H.isAuth(req) && req.auth.id === String(res.id),
+
+            // Delete not allowed
+            delete: () => false,
+        },
+
+        users_public: {
+            // Allow read and update if the auth.id matches the userId (row id)
+            read: (req, res) => true,
             update: (req, res) => H.isAuth(req) && req.auth.id === String(res.id),
 
             // Allow create if auth.id == resource.userId

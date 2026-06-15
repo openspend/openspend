@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'preact/hooks';
 import { useLocation } from 'preact-iso';
 import { signUp, signIn, signOut } from '../auth';
+import { db } from '../postbase';
+import { Timestamp } from '../../lib/postbase/db';
 
 function useQuery() {
     const location = useLocation();
@@ -11,7 +13,7 @@ export default function AuthPanel({ user }) {
     const query = useQuery();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [redirectUrl, setRedirectUrl] = useState('/dashboard');
+    const [redirectUrl, setRedirectUrl] = useState('/');
 
     useEffect(() => {
         const redirectUrl = query.get('redirectUrl');
@@ -19,7 +21,7 @@ export default function AuthPanel({ user }) {
         if (redirectUrl && redirectUrl.length > 0) {
             setRedirectUrl(redirectUrl);
         } else {
-            setRedirectUrl('/dashboard');
+            setRedirectUrl('/');
         }
     }, []);
 
@@ -27,7 +29,7 @@ export default function AuthPanel({ user }) {
         alert("Finish setting up Sign in with Google. Learn more at https://www.better-auth.com/docs/authentication/google")
         await signIn.social({
             provider: "google",
-            callbackURL: import.meta.env.VITE_FRONTEND_URL + '/dashboard'
+            callbackURL: import.meta.env.VITE_FRONTEND_URL + '/'
         });
     };
 
@@ -52,8 +54,34 @@ export default function AuthPanel({ user }) {
                                         onRequest: (ctx) => {
                                             //show loading
                                         },
-                                        onSuccess: (ctx) => {
-                                            //redirect to the dashboard or sign in page
+                                        onSuccess: async (ctx) => {
+                                            const { id, name, email, emailVerified, image, createdAt, updatedAt } = ctx.data.user;
+
+                                            let firstName = "";
+                                            let lastName = "";
+
+                                            if (name) {
+                                                const [_firstName, _lastName] = name.split(' ');
+                                                firstName = _firstName;
+                                                lastName = _lastName;
+                                            }
+
+                                            await db.collection('users').doc(id).set({
+                                                firstName,
+                                                lastName,
+                                                email,
+                                                emailVerified,
+                                                profilePicUrl: image,
+                                                createdAt: Timestamp.fromDate(createdAt),
+                                                updatedAt: Timestamp.fromDate(updatedAt),
+                                            });
+
+                                            await db.collection('users_public').doc(id).set({
+                                                firstName,
+                                                profilePicUrl: image,
+                                            });
+
+                                            // redirect to the dashboard or sign in page
                                             window.location = import.meta.env.VITE_FRONTEND_URL;
                                         },
                                         onError: (ctx) => {

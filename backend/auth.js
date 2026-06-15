@@ -62,11 +62,12 @@ export const auth = betterAuth({
             enabled: true, // this is required to delete the user
             beforeDelete: async (user) => {
                 // Optionally delete relevant relation if you were storing any
-                // try {
-                //     await db.collection('users').doc(user.id).delete();
-                // } catch (err) {
-                //     console.error('Error cleaning up users', err);
-                // }
+                try {
+                    await db.collection('users').doc(user.id).delete();
+                    await db.collection('users_public').doc(user.id).delete();
+                } catch (err) {
+                    console.error('Error cleaning up users', err);
+                }
             },
         }
     },
