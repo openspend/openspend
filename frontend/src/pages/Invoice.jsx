@@ -17,6 +17,7 @@ export function Invoice() {
     const location = useLocation();
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState(null);
+    const [userObj, setUserObj] = useState(null);
     const [brand, setBrand] = useState(
         // {
         //     name: 'CasaZero',
@@ -72,6 +73,15 @@ export function Invoice() {
 
     useEffect(() => {
         if (!user) return;
+
+        (async () => {
+            const userDoc = await db.collection('users').doc(user.id).get();
+            const userObj = {
+                id: userDoc.id,
+                ...userDoc.data(),
+            };
+            setUserObj(userObj);
+        })();
 
         (async () => {
             const brandDoc = await db.collection('brands').doc(user.id).get();
@@ -141,12 +151,22 @@ export function Invoice() {
             return;
         }
 
-        const uniqueIdentifier = generateSixDigitAlphanumeric();
+        if (!userObj) {
+            alert('Older account. Please close your account and start over with new sign up.');
+            return;
+        }
 
         let amountDecimal = amount;
         if (typeof amountDecimal === 'string') {
             amountDecimal = parseFloat(amount);
         }
+
+        if (!userObj.hasOwnProperty('balance') || userObj.balance < (amount * 0.329)) {
+            alert('Insufficient balance. Please add money to your account from billing\'s page');
+            return;
+        }
+
+        const uniqueIdentifier = generateSixDigitAlphanumeric();
 
         let email = brand?.depositEmail;
         if (email && (!brand.hasOwnProperty('uniqueIdentifier') || brand?.uniqueIdentifier)) {
