@@ -2,8 +2,9 @@ import { useEffect, useState } from 'preact/hooks';
 import { LocationProvider, Router, Route } from 'preact-iso';
 import Header from './components/Header';
 import Home from './pages/Home';
-import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import Billing from './pages/Billing';
 import { getSession } from './auth';
 import { Invoice } from './pages/Invoice';
 import { Pay } from './pages/Pay';
@@ -29,8 +30,9 @@ export default function App() {
             <LocationProvider>
                 <Router>
                     <Route path="/" component={Home} user={user} />
-                    <Route path="/dashboard" component={Dashboard} user={user} />
                     <Route path="/login" component={Login} user={user} />
+                    <Route path="/dashboard" component={Dashboard} user={user} />
+                    <Route path="/billing" component={Billing} user={user} />
                     <Route path="/invoice" component={Invoice} user={user} />
                     <Route path="/invoice/:invoiceId" component={Invoice} user={user} />
                     <Route path="/pay/:invoiceId" component={Pay} user={user} />
