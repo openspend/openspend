@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { useLocation } from 'preact-iso';
 import { IoClose } from 'react-icons/io5';
 import { getAuth } from '../auth';
@@ -27,6 +27,7 @@ export function Settings() {
         //     }],
         // }
     );
+    const buttonRef = useRef(null);
 
     useEffect(() => {
         setLoading(false);
@@ -72,38 +73,63 @@ export function Settings() {
     const update = async (event) => {
         event?.preventDefault();
 
-        const formData = new FormData(event.target);
-        const data = Object.fromEntries(formData.entries());
+        if (buttonRef?.current) buttonRef.current.innerText = '✅ Updated';
 
-        await db.collection('brands').doc(user.id).set(data, { merge: true });
+        try {
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+
+            await db.collection('brands').doc(user.id).set(data, { merge: true });
+        } catch (err) {
+
+        } finally {
+            setTimeout(() => {
+                if (buttonRef?.current) buttonRef.current.innerText = 'Update';
+            }, 2000);
+        }
     };
 
     const addTax = async (event) => {
         event?.preventDefault();
 
-        const formData = new FormData(event.target);
-        const data = Object.fromEntries(formData.entries());
+        try {
+            const formData = new FormData(event.target);
+            const { name, value, percent } = Object.fromEntries(formData.entries());
 
-        let taxes = [];
-        if (brand && brand?.taxes) {
-            taxes = brand.taxes;
+            if (!name || !value || !percent) {
+                buttonRef.current = null;
+                return;
+            }
+
+            if (buttonRef?.current) buttonRef.current.innerText = '✅ Added';
+
+            let taxes = [];
+            if (brand && brand?.taxes) {
+                taxes = brand.taxes;
+            }
+
+            taxes.push(
+                {
+                    name,
+                    value,
+                    percent: parseFloat(percent),
+                },
+            );
+
+            await db.collection('brands').doc(user.id).set({ taxes }, { merge: true });
+
+            const brandDoc = await db.collection('brands').doc(user.id).get();
+            setBrand({
+                id: brandDoc.id,
+                ...brandDoc.data(),
+            });
+        } catch (err) {
+
+        } finally {
+            setTimeout(() => {
+                if (buttonRef?.current) buttonRef.current.innerText = 'Add';
+            }, 2000);
         }
-
-        taxes.push(
-            {
-                name: data.name,
-                value: data.value,
-                percent: parseFloat(data.percent),
-            },
-        );
-
-        await db.collection('brands').doc(user.id).set({ taxes }, { merge: true });
-
-        const brandDoc = await db.collection('brands').doc(user.id).get();
-        setBrand({
-            id: brandDoc.id,
-            ...brandDoc.data(),
-        });
     };
 
     const deleteTax = async (event, tax) => {
@@ -142,7 +168,10 @@ export function Settings() {
                     <form class="w-full grid grid-cols-3 gap-2" onSubmit={update}>
                         <input name="name" placeholder="Brand or Company Name" value={brand?.name}
                             class="col-span-2 p-4 border-1" onChange={handleChange} />
-                        <button type="submit" class="bg-blue-600 text-white p-4 rounded cursor-pointer">Update</button>
+                        <button type="submit" class="bg-blue-600 text-white p-4 rounded cursor-pointer"
+                            onClick={e => buttonRef.current = e.target}>
+                            Update
+                        </button>
                     </form>
                 </div>
                 <p class="text-sm">This is the contact name customers will use to save your email in their online banking app.</p>
@@ -155,7 +184,10 @@ export function Settings() {
                         <input name="depositEmail" placeholder="Email for online banking deposit (Interac for Canada)"
                             value={brand?.depositEmail}
                             class="col-span-2 p-4 border-1" />
-                        <button type="submit" class="bg-blue-600 text-white p-4 rounded cursor-pointer">Update</button>
+                        <button type="submit" class="bg-blue-600 text-white p-4 rounded cursor-pointer"
+                            onClick={e => buttonRef.current = e.target}>
+                            Update
+                        </button>
                     </div>
                     <label>
                         <p class="text-sm">
@@ -178,7 +210,10 @@ export function Settings() {
                     <p>Currency (USD, EUR, GBP, CAD, AUD)</p>
                     <input name="currency" placeholder="USD, EUR, GBP, CAD, AUD" value={brand?.currency}
                         class="col-span-2 p-4 border-1" />
-                    <button type="submit" class="bg-blue-600 text-white p-4 rounded cursor-pointer">Update</button>
+                    <button type="submit" class="bg-blue-600 text-white p-4 rounded cursor-pointer"
+                        onClick={e => buttonRef.current = e.target}>
+                        Update
+                    </button>
                 </form>
             </div>
 
@@ -193,7 +228,7 @@ export function Settings() {
                 {brand && brand?.taxes && brand?.taxes.map(t => <div class="relative grid grid-cols-3 gap-2 flex items-center mt-2">
                     <p>{t.name}</p>
                     <p>{t.value}</p>
-                    <p>{t.percent.toFixed(5)}</p>
+                    <p>{(t.percent || 0).toFixed(5)}</p>
                     <button class="absolute right-1 cursor-pointer" onClick={e => deleteTax(e, t)}>
                         <IoClose />
                     </button>
@@ -207,7 +242,10 @@ export function Settings() {
                         <input name="percent" placeholder="Percent (0.09975)"
                             class="p-4 border-1" />
                     </div>
-                    <button type="submit" class="bg-blue-600 text-white p-4 rounded cursor-pointer">Add</button>
+                    <button type="submit" class="bg-blue-600 text-white p-4 rounded cursor-pointer"
+                        onClick={e => buttonRef.current = e.target}>
+                        Add
+                    </button>
                 </form>
             </div>
         </div>
