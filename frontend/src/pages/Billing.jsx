@@ -126,7 +126,7 @@ export default function Billing() {
 
         <p>OpenSpend uses OpenSpend to manage billing.</p>
 
-        <p>Your current balance is: <span>{brand?.currencySymbol || '$'}{userObj?.balance || '0'}</span></p>
+        <p>Your current balance is: <span>{brand?.currencySymbol || '$'}{(userObj?.balance || 0).toFixed(2)}</span></p>
 
         <p>How much would you like to add?</p>
         <div class="flex flex-wrap items-center justify-center gap-2">
