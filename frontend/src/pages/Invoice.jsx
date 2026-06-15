@@ -181,7 +181,7 @@ export function Invoice() {
             currency: brand?.currency || 'CAD',
             currencySymbol: brand?.currencySymbol || '$',
             amount: amountDecimal,
-            tax: parseFloat(tax.toFixed(2)),
+            tax: parseFloat((amount * tax).toFixed(2)),
             uniqueIdentifier,
             timestamp: Timestamp.now(),
             status: INVOICE_STATUS.DRAFT,
@@ -262,7 +262,7 @@ export function Invoice() {
                 </div>
                 {brand && brand?.taxes && <div class="mt-10 flex flex-col gap-3 px-2 text-3xl">
                     {brand?.taxes.map(t => <p key={`${t.name}-${amount}`} class="text-center">{t.name}: {brand.currencySymbol}{(amount * t.percent).toFixed(2)}</p>)}
-                    <p key={`total-${amount}`} class="text-center">Total: {brand.currencySymbol}{amount && (parseFloat(amount) + tax).toFixed(2)}</p>
+                    <p key={`total-${amount}`} class="text-center">Total: {brand.currencySymbol}{amount && (parseFloat(amount) + (amount * tax)).toFixed(2)}</p>
                 </div>}
             </form>
 

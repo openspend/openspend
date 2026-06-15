@@ -15,7 +15,7 @@ export function Pay() {
         currency: 'CAD',
         currencySymbol: '$',
         amount: 15,
-        tax: 2.25,
+        tax: 0,
         uniqueIdentifier: '',
         timestamp: new Date(),
         status: INVOICE_STATUS.DRAFT,
