@@ -248,6 +248,11 @@ export function Invoice() {
                         Create
                     </button>
                 </div>
+
+                <div class="text-sm text-center">
+                    <p>Currency: <span class="font-bold">{brand?.currency || 'USD'}</span></p>
+                </div>
+
                 {brand && brand?.taxes
                     ? <div class="mt-10 flex flex-col gap-3 px-2 text-3xl">
                         {brand?.taxes.map(t => <p key={`${t.name}-${amount}`} class="text-center">{t.name}: {brand.currencySymbol}{(amount * t.percent).toFixed(2)}</p>)}
