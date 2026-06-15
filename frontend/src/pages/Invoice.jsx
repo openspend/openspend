@@ -5,24 +5,12 @@ import { db } from '../postbase';
 import { Timestamp } from '../../lib/postbase/db';
 import { MdCopyAll } from 'react-icons/md';
 import { getAuth } from '../auth';
+import { generateSixDigitAlphanumeric } from '../common/generateSixDigitAlphanumeric';
 
 export const INVOICE_STATUS = {
     DRAFT: 'draft',
     PAID: 'paid',
 };
-
-function generateSixDigitAlphanumeric() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let result = '';
-    const charsLength = chars.length;
-
-    for (let i = 0; i < 6; i++) {
-        result += chars.charAt(Math.floor(Math.random() * charsLength));
-    }
-
-    return result;
-}
-
 
 export function Invoice() {
     const { params } = useRoute();
