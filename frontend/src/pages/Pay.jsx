@@ -127,6 +127,8 @@ export function Pay() {
                 Start
             </button>
 
+            <p class="mt-10">It's fast and free. No sign in required.</p>
+
             {/* Backdrop */}
             <div
                 class={`
