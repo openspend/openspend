@@ -25,6 +25,20 @@ export default {
         },
 
         /** === INVOICES === */
+        brands: {
+            // Allow read and update if the auth.id matches the userId (row id)
+            read: () => true,
+            update: () => true,
+
+            // Allow create if auth.id == resource.userId
+            create: () => true,
+
+            // Delete not allowed
+            delete: () => false,
+        },
+
+
+        /** === INVOICES === */
         invoices: {
             // Allow read and update if the auth.id matches the userId (row id)
             read: () => true,
