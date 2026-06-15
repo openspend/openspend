@@ -197,6 +197,10 @@ export function Invoice() {
 
         const invoiceDoc = await db.collection('invoices').add(formData);
         const invoiceId = invoiceDoc.id;
+
+        const newBalance = userObj.balance - (amount * 0.329);
+        await db.collection('users').doc(user.id).set({ balance: newBalance }, { merge: true });
+
         location.route(`/invoice/${invoiceId}`);
     };
 
