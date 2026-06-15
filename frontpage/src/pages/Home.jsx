@@ -17,7 +17,7 @@ export default function Home({ user }) {
                         </p>
 
                         <div className="mt-8 flex gap-4">
-                            <a href="/login" className="bg-blue-600 text-white px-6 py-3 rounded-md font-medium shadow hover:bg-blue-700 transition">Login with BetterAuth</a>
+                            <a href="https://app.openspend.riamu.io" className="bg-blue-600 text-white px-6 py-3 rounded-md font-medium shadow hover:bg-blue-700 transition">Try Now</a>
                         </div>
                     </div>
 
