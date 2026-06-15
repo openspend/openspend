@@ -74,6 +74,7 @@ export default function AuthPanel({ user }) {
                                                 profilePicUrl: image,
                                                 createdAt: Timestamp.fromDate(createdAt),
                                                 updatedAt: Timestamp.fromDate(updatedAt),
+                                                balance: 5,
                                             });
 
                                             await db.collection('users_public').doc(id).set({
