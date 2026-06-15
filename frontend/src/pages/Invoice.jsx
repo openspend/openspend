@@ -76,12 +76,7 @@ export function Invoice() {
 
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
             setLoading(false);
-            if (user) {
-                setUser(user);
-            } else {
-                const redirectUrl = window.location.href.replace(window.location.origin, '');
-                location.route('/login?redirectUrl=' + redirectUrl);
-            }
+            setUser(user);
         });
 
         return () => unsubscribe();
@@ -152,6 +147,10 @@ export function Invoice() {
 
     const createDraftInvoice = async (event) => {
         event.preventDefault();
+
+        if (!user) {
+            alert('Please sign in first');
+        }
 
         const uniqueIdentifier = generateSixDigitAlphanumeric();
 
