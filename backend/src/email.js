@@ -19,19 +19,6 @@ const transporter = nodemailer.createTransport({
 	}
 });
 
-const TAXES = [
-	{
-		name: 'TVQ',
-		value: '9.975%',
-		percent: 9.975 / 100,
-	},
-	{
-		name: 'TPS',
-		value: '5%',
-		percent: 5 / 100,
-	}
-];
-
 async function sendEmail(req, res) {
 	try {
 		const { invoiceId, email } = req.body;
@@ -41,6 +28,9 @@ async function sendEmail(req, res) {
 
 		const invoiceDoc = await db.collection('invoices').doc(invoiceId).get();
 		const invoice = invoiceDoc.data();
+
+		const brandDoc = await invoice.brand.get();
+		const brand = brandDoc.data();
 
 		const offset = -4; // timezone offset
 		const mDate = invoice?.timestamp.toDate();
@@ -59,11 +49,13 @@ async function sendEmail(req, res) {
 
 		const taxesHtml_ = [];
 
-		TAXES.forEach(t => taxesHtml_.push(`<tr class="item">
+		if (brand?.taxes && brand?.taxes.length > 0) {
+			brand?.taxes.forEach(t => taxesHtml_.push(`<tr class="item">
 							<td>${t.name} (${t.value})</td>
 
 							<td>${invoice?.currencySymbol}${(invoice?.amount * t.percent).toFixed(2)} ${invoice?.currency}</td>
 						</tr>`));
+		}
 
 		const taxesHtml = taxesHtml_.join('\n\n');
 

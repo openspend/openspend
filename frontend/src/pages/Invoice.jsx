@@ -6,22 +6,6 @@ import { Timestamp } from '../../lib/postbase/db';
 import { MdCopyAll } from 'react-icons/md';
 import { getAuth } from '../auth';
 
-const TAXES = [
-    {
-        name: 'TVQ',
-        value: '9.975%',
-        percent: 9.975 / 100,
-    },
-    {
-        name: 'TPS',
-        value: '5%',
-        percent: 5 / 100,
-    }
-];
-
-const TVQ = TAXES[0].percent;
-const TPS = TAXES[1].percent;
-
 export const INVOICE_STATUS = {
     DRAFT: 'draft',
     PAID: 'paid',
@@ -74,11 +58,12 @@ export function Invoice() {
         currency: 'CAD',
         currencySymbol: '$',
         amount: 15,
-        tax: 2.25,
+        tax: 0.00,
         uniqueIdentifier: '',
         timestamp: new Date(),
         status: INVOICE_STATUS.DRAFT,
     });
+    const [tax, setTax] = useState(0);
 
     useEffect(() => {
         setLoading(false);
@@ -107,10 +92,19 @@ export function Invoice() {
 
         (async () => {
             const brandDoc = await db.collection('brands').doc(user.id).get();
-            setBrand({
+            const brand = {
                 id: brandDoc.id,
                 ...brandDoc.data(),
-            });
+            };
+            setBrand(brand);
+
+            const taxes = brand?.taxes.map(t => t.percent);
+            if (taxes && taxes.length > 0) {
+                const tax = taxes.reduce((p, c) => p + c, 0);
+                setTax(tax);
+            } else {
+                setTax(0);
+            }
         })();
 
     }, [user]);
@@ -123,7 +117,7 @@ export function Invoice() {
                 currency: 'CAD',
                 currencySymbol: '$',
                 amount: 15,
-                tax: 2.25,
+                tax,
                 uniqueIdentifier: '',
                 timestamp: new Date(),
                 status: INVOICE_STATUS.DRAFT,
@@ -172,13 +166,22 @@ export function Invoice() {
             email = `${emailUser.toUpperCase()}+${uniqueIdentifier}@${emailDomain.toUpperCase()}`;
         }
 
+        const taxes = brand?.taxes.map(t => t.percent);
+        if (taxes && taxes.length > 0) {
+            const tax = taxes.reduce((p, c) => p + c, 0);
+            setTax(tax);
+        } else {
+            setTax(0);
+        }
+
         const formData = {
+            brand,
             name: brand?.name || 'CasaZero',
             email,
             currency: brand?.currency || 'CAD',
             currencySymbol: brand?.currencySymbol || '$',
             amount: amountDecimal,
-            tax: parseFloat(((amountDecimal * TVQ) + (amountDecimal * TPS)).toFixed(2)),
+            tax: parseFloat(tax.toFixed(2)),
             uniqueIdentifier,
             timestamp: Timestamp.now(),
             status: INVOICE_STATUS.DRAFT,
@@ -251,11 +254,10 @@ export function Invoice() {
                         Create
                     </button>
                 </div>
-                <div class="mt-10 flex flex-col gap-3 px-2 text-3xl">
-                    <p key={`tvq-${amount}`} class="text-center">TVQ: ${(amount * TVQ).toFixed(2)}</p>
-                    <p key={`tps-${amount}`} class="text-center">TPS: ${(amount * TPS).toFixed(2)}</p>
-                    <p key={`total-${amount}`} class="text-center">Total: ${amount && (parseFloat(amount) + (amount * TVQ) + (amount * TPS)).toFixed(2)}</p>
-                </div>
+                {brand && brand?.taxes && <div class="mt-10 flex flex-col gap-3 px-2 text-3xl">
+                    {brand?.taxes.map(t => <p key={`${t.name}-${amount}`} class="text-center">{t.name}: {brand.currencySymbol}{(amount * t.percent).toFixed(2)}</p>)}
+                    <p key={`total-${amount}`} class="text-center">Total: {brand.currencySymbol}{amount && (parseFloat(amount) + tax).toFixed(2)}</p>
+                </div>}
             </form>
 
             {invoice?.status === INVOICE_STATUS.PAID
