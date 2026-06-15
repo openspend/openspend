@@ -48,6 +48,10 @@ export default function Home({ user }) {
                             <li>Get paid</li>
                         </ol>
 
+                        <p className="mt-5 text-lg text-gray-600 max-w-lg">
+                            Instant payouts directly to your account. Zero delays.
+                        </p>
+
                         <div className="mt-8 flex gap-4">
 
                         </div>
