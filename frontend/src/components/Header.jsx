@@ -2,7 +2,7 @@ import { useState, useEffect } from 'preact/hooks';
 import { getAuth, signOut } from '../auth';
 
 export default function Header({ user }) {
-    const [menu, setMenu] = useState(false);
+    const [showMenu, setShowMenu] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -10,6 +10,17 @@ export default function Header({ user }) {
         window.addEventListener('scroll', onScroll);
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
+
+    // Add to Header component
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (showMenu && !e.target.closest('.profile-menu-container')) {
+                setShowMenu(false);
+            }
+        };
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [showMenu]);
 
     return (
         <header className={`w-full z-40 transition-all ${scrolled ? 'bg-white shadow' : 'bg-transparent'} backdrop-blur`}>
@@ -24,11 +35,11 @@ export default function Header({ user }) {
                 <div className="flex items-center gap-4">
                     {user ? (
                         <div className="relative">
-                            <button onClick={() => setMenu(!menu)} className="flex items-center gap-2 px-3 py-1 border rounded-md hover:bg-gray-50">
+                            <button onClick={() => setShowMenu(!showMenu)} className="flex items-center gap-2 px-3 py-1 border rounded-md hover:bg-gray-50">
                                 <img src={user.image ?? '/assets/img/blank-profile-picture-960_720.webp'} className="w-8 h-8 rounded-full" alt="profile" />
                                 <span className="hidden sm:inline text-sm">{user.name || user.email}</span>
                             </button>
-                            {menu && (
+                            {showMenu && (
                                 <div className="absolute right-0 mt-2 bg-white border rounded-md shadow-lg w-48 z-50">
                                     <a href="/dashboard" className="block px-4 py-2 hover:rounded-t-md hover:bg-gray-50">Dashboard</a>
                                     <a href="/billing" className="block px-4 py-2 hover:bg-gray-50">Billing</a>
