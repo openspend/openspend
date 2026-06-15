@@ -118,16 +118,17 @@ export function Pay() {
     }
 
     return (
-        <div class="w-full flex flex-col items-center p-2">
-            <p class="mb-10 text-4xl text-center">Send money by email (use Zelle or Interac)</p>
+        <div class="w-full flex flex-col items-center p-2 gap-8">
+            <p class="text-4xl text-center">Send money by email</p>
+            <p class="text-xl">E.g, Zelle or Interac</p>
             <button
-                class="px-4 py-2 bg-blue-600 text-3xl text-white rounded hover:bg-blue-700 transition"
+                class="px-10 py-2 bg-blue-600 text-3xl text-white rounded hover:bg-blue-700 transition"
                 onClick={() => setOpen(true)}
             >
                 Start
             </button>
 
-            <p class="mt-10">It's fast and free. No sign in required.</p>
+            <p class="">It's fast and free. No sign in required.</p>
 
             {/* Backdrop */}
             <div
