@@ -117,6 +117,10 @@ export default function Billing() {
         location.route(`/pay/${invoiceId}`);
     };
 
+    if (loading) {
+        return <div class="loading">Loading...</div>;
+    }
+
     return <div class="w-full flex flex-col items-center text-center text-2xl gap-8 p-4">
         <h2 class="mt-4 text-4xl text-center">Billing</h2>
 
