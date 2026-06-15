@@ -120,7 +120,7 @@ export default function Users({ user }) {
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    {u.image.includes('googleusercontent.com') ? 'Google' : 'Email'}
+                                    {(u?.image || '/assets/img/blank-profile-picture-960_720.webp').includes('googleusercontent.com') ? 'Google' : 'Email'}
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
