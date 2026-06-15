@@ -138,6 +138,7 @@ export function Invoice() {
 
         if (!user) {
             alert('Please sign in first');
+            return;
         }
 
         const uniqueIdentifier = generateSixDigitAlphanumeric();
