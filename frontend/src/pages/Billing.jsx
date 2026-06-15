@@ -1,20 +1,78 @@
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import { useLocation } from "preact-iso";
 import { db } from "../postbase";
 import { generateSixDigitAlphanumeric } from "../common/generateSixDigitAlphanumeric";
 import { Timestamp } from "../../lib/postbase/db";
 import { INVOICE_STATUS } from "./Invoice";
+import { getAuth } from "../auth";
 
 const series = [10, 20, 50, 100];
 
-export default function Billing({ user }) {
+const BRAND_BY_CURRENCY = {
+    'USD': import.meta.env.VITE_BRAND_ID_USD,
+    'CAD': import.meta.env.VITE_BRAND_ID_CAD,
+};
+
+export default function Billing() {
     const location = useLocation();
+    const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState(null);
+    const [userBrand, setUserBrand] = useState(null);
+    const [brand, setBrand] = useState(null);
     const [amount, setAmount] = useState(0);
 
+    useEffect(() => {
+        setLoading(false);
+
+        const auth = getAuth();
+
+        if (!user) {
+            setUser(auth.currentUser);
+        }
+
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+            setLoading(false);
+            if (user) {
+                setUser(user);
+            } else {
+                const redirectUrl = window.location.href.replace(window.location.origin, '');
+                location.route('/login?redirectUrl=' + redirectUrl);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    useEffect(() => {
+        if (!user) return;
+
+        (async () => {
+            const userBrandDoc = await db.collection('brands').doc(user.id).get();
+            const userBrand = userBrandDoc.data();
+            setUserBrand(userBrand);
+
+            let brandId = BRAND_BY_CURRENCY['USD'];
+            if (BRAND_BY_CURRENCY.hasOwnProperty(userBrand.currency)) {
+                brandId = BRAND_BY_CURRENCY[userBrand.currency];
+            }
+
+            // Get OpenSpend brand
+            const brandDoc = await db.collection('brands').doc(brandId).get();
+            const brand = brandDoc.data();
+            setBrand(brand);
+        })();
+    }, [user]);
+
     const createInvoice = async (amount) => {
-        // Get OpenSpend brand
-        const brandDoc = await db.collection('brands').doc(import.meta.env.VITE_ADMIN_USER_ID).get();
-        const brand = brandDoc.data();
+        if (!userBrand) {
+            alert('Please set brand name, email and currency in settings');
+            return;
+        }
+
+        if (!userBrand.hasOwnProperty('currency') || !userBrand.currency) {
+            alert('Please set currency in settings');
+            return;
+        }
 
         const uniqueIdentifier = generateSixDigitAlphanumeric();
 
@@ -64,6 +122,6 @@ export default function Billing({ user }) {
         <input name="amount" type="number" min="110" step="10" class="border-1 w-80 px-2 py-3" placeholder="Custom Amount ($1500)" onChange={e => setAmount(e.target.value)} />
         <button class="bg-blue-600 text-white text-lg border-1 px-8 py-3 rounded" onClick={e => createInvoice(amount)}>Create Invoice</button>
 
-        <p>All prices are in USD</p>
+        <p>All prices are in {brand?.currency || 'USD'}</p>
     </div>;
 }
