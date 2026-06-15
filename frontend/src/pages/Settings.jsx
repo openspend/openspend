@@ -97,7 +97,27 @@ export function Settings() {
             },
         );
 
-        console.log(taxes);
+        await db.collection('brands').doc(user.id).set({ taxes }, { merge: true });
+
+        const brandDoc = await db.collection('brands').doc(user.id).get();
+        setBrand({
+            id: brandDoc.id,
+            ...brandDoc.data(),
+        });
+    };
+
+    const deleteTax = async (event, tax) => {
+        event?.preventDefault();
+
+        let taxes = [];
+        if (brand && brand?.taxes) {
+            taxes = brand.taxes;
+        }
+
+        const index = taxes.findIndex(t => t.name === tax.name)
+        if (index !== -1) {
+            taxes.splice(index, 1);
+        }
 
         await db.collection('brands').doc(user.id).set({ taxes }, { merge: true });
 
@@ -174,7 +194,7 @@ export function Settings() {
                     <p>{t.name}</p>
                     <p>{t.value}</p>
                     <p>{t.percent.toFixed(5)}</p>
-                    <button class="absolute right-1 cursor-pointer">
+                    <button class="absolute right-1 cursor-pointer" onClick={e => deleteTax(e, t)}>
                         <IoClose />
                     </button>
                 </div>)}
