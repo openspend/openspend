@@ -40,12 +40,14 @@ export function Search() {
     useEffect(() => {
         const q = query.get('q');
 
-        if (!q) return;
-
         (async () => {
-            const snapshot = await db.collection('invoices')
-                .where('uniqueIdentifier', 'LIKE', q)
-                .get();
+            let query = db.collection('invoices');
+
+            if (q) {
+                query = query.where('uniqueIdentifier', 'LIKE', q);
+            }
+
+            const snapshot = await query.get();
 
             if (snapshot.size > 0) {
                 setInvoices(snapshot.map(doc => {
