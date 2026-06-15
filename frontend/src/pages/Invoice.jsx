@@ -98,7 +98,7 @@ export function Invoice() {
             };
             setBrand(brand);
 
-            const taxes = brand?.taxes.map(t => t.percent);
+            const taxes = (brand?.taxes || []).map(t => t.percent);
             if (taxes && taxes.length > 0) {
                 const tax = taxes.reduce((p, c) => p + c, 0);
                 setTax(tax);
@@ -166,7 +166,7 @@ export function Invoice() {
             email = `${emailUser.toUpperCase()}+${uniqueIdentifier}@${emailDomain.toUpperCase()}`;
         }
 
-        const taxes = brand?.taxes.map(t => t.percent);
+        const taxes = (brand?.taxes || []).map(t => t.percent);
         if (taxes && taxes.length > 0) {
             const tax = taxes.reduce((p, c) => p + c, 0);
             setTax(tax);
