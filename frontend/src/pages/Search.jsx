@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { useLocation } from 'preact-iso';
 import { db } from '../postbase';
+import { getAuth } from '../auth';
 
 function useQuery() {
     const location = useLocation();
@@ -9,7 +10,32 @@ function useQuery() {
 
 export function Search() {
     const query = useQuery();
+    const location = useLocation();
+    const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState(null);
     const [invoices, setInvoices] = useState([]);
+
+    useEffect(() => {
+        setLoading(false);
+
+        const auth = getAuth();
+
+        if (!user) {
+            setUser(auth.currentUser);
+        }
+
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+            setLoading(false);
+            if (user) {
+                setUser(user);
+            } else {
+                const redirectUrl = window.location.href.replace(window.location.origin, '');
+                location.route('/login?redirectUrl=' + redirectUrl);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     useEffect(() => {
         const q = query.get('q');
@@ -31,6 +57,10 @@ export function Search() {
             }
         })();
     }, [query.get('q')]);
+
+    if (loading) {
+        return <div class="loading">Loading...</div>;
+    }
 
     return (
         <div class="w-full flex flex-col items-center">
