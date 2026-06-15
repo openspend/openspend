@@ -183,7 +183,7 @@ export function Invoice() {
         }
 
         const formData = {
-            brand,
+            brand: db.collection('brands').doc(brand.id),
             name: brand?.name || 'CasaZero',
             email,
             currency: brand?.currency || 'CAD',
