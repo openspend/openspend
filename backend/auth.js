@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { admin, createAuthMiddleware } from "better-auth/plugins"
+import { admin as adminAsAdminPlugin, createAuthMiddleware } from "better-auth/plugins"
 import { pool } from "./lib/postbase/db.js";
 //import { phoneNumber } from "better-auth/plugins"
 import { makePostbaseAdminClient } from "./lib/postbase/adminClient.js";
@@ -71,14 +71,12 @@ export const auth = betterAuth({
         }
     },
     plugins: [
-        admin(
-            // {
-            //     // add user id for an admin
-            //     adminUserIds: [
-            //         process.env.ADMIN_USER_ID,
-            //     ],
-            // }
-        ),
+        adminAsAdminPlugin({
+            adminUserIds: [
+                process.env.VITE_BRAND_ID_USD,
+                process.env.VITE_BRAND_ID_CAD,
+            ],
+        }),
         // phoneNumber({
         //     sendOTP: ({ phoneNumber, code }, request) => {
         //         // Implement sending OTP code via SMS
