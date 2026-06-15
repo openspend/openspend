@@ -113,7 +113,7 @@ export default function Users({ user }) {
                                     </div>
                                 </td>
                                 <td scope="row" class="flex items-center px-6 py-4 text-heading whitespace-nowrap">
-                                    <img class="w-10 h-10 rounded-full" src={u.image} alt="Jese image" />
+                                    <img class="w-10 h-10 rounded-full" src={u.image} alt={u?.name} />
                                     <div class="ps-3">
                                         <div class="text-base font-semibold">{u.name}</div>
                                         <div class="font-normal text-body">{u.email}</div>
