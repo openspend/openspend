@@ -4,6 +4,7 @@ import QRCode from 'easyqrcodejs';
 import { db } from '../postbase';
 import { Timestamp } from '../../lib/postbase/db';
 import { MdCopyAll } from 'react-icons/md';
+import { getAuth } from '../auth';
 
 const TAXES = [
     {
@@ -42,6 +43,27 @@ function generateSixDigitAlphanumeric() {
 export function Invoice() {
     const { params } = useRoute();
     const location = useLocation();
+    const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState(null);
+    const [brand, setBrand] = useState(
+        // {
+        //     name: 'CasaZero',
+        //     depositEmail: 'dasvilleda@gmail.com',
+        //     currency: 'CAD',
+        //     currencySymbol: '$',
+        //     uniqueIdentifier: true,
+        //     taxes: [{
+        //         name: 'TVQ',
+        //         value: '9.975%',
+        //         percent: 9.975 / 100,
+        //     },
+        //     {
+        //         name: 'TPS',
+        //         value: '5%',
+        //         percent: 5 / 100,
+        //     }],
+        // }
+    );
     const [amount, setAmount] = useState(15);
     const qrCodeRef = useRef(null);
     const qrInstance = useRef(null);
@@ -57,6 +79,41 @@ export function Invoice() {
         timestamp: new Date(),
         status: INVOICE_STATUS.DRAFT,
     });
+
+    useEffect(() => {
+        setLoading(false);
+
+        const auth = getAuth();
+
+        if (!user) {
+            setUser(auth.currentUser);
+        }
+
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+            setLoading(false);
+            if (user) {
+                setUser(user);
+            } else {
+                const redirectUrl = window.location.href.replace(window.location.origin, '');
+                location.route('/login?redirectUrl=' + redirectUrl);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    useEffect(() => {
+        if (!user) return;
+
+        (async () => {
+            const brandDoc = await db.collection('brands').doc(user.id).get();
+            setBrand({
+                id: brandDoc.id,
+                ...brandDoc.data(),
+            });
+        })();
+
+    }, [user]);
 
     useEffect(() => {
         if (!params?.invoiceId) {
@@ -108,11 +165,18 @@ export function Invoice() {
         if (typeof amountDecimal === 'string') {
             amountDecimal = parseFloat(amount);
         }
+
+        let email = brand?.depositEmail;
+        if (email && (!brand.hasOwnProperty('uniqueIdentifier') || brand?.uniqueIdentifier)) {
+            let [emailUser, emailDomain] = email.split('@');
+            email = `${emailUser.toUpperCase()}+${uniqueIdentifier}@${emailDomain.toUpperCase()}`;
+        }
+
         const formData = {
-            name: 'CasaZero',
-            email: `DASVILLEDA+${uniqueIdentifier}@GMAIL.COM`,
-            currency: 'CAD',
-            currencySymbol: '$',
+            name: brand?.name || 'CasaZero',
+            email,
+            currency: brand?.currency || 'CAD',
+            currencySymbol: brand?.currencySymbol || '$',
             amount: amountDecimal,
             tax: parseFloat(((amountDecimal * TVQ) + (amountDecimal * TPS)).toFixed(2)),
             uniqueIdentifier,
@@ -164,6 +228,10 @@ export function Invoice() {
             location.route(`/invoice/${invoice.id}`);
         }
     };
+
+    if (loading) {
+        return <div class="loading">Loading...</div>;
+    }
 
     return (
         <div class="w-full flex flex-col items-center">
