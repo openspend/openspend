@@ -38,16 +38,21 @@ export function Search() {
     }, []);
 
     useEffect(() => {
+        if (!user) return;
+
         const q = query.get('q');
 
         (async () => {
-            let query = db.collection('invoices');
+            let query = db.collection('invoices')
+                .where('brand', '==', db.collection('brands').doc(user.id));
 
             if (q) {
                 query = query.where('uniqueIdentifier', 'LIKE', q);
             }
 
-            const snapshot = await query.get();
+            const snapshot = await query
+                .orderBy('timestamp', 'desc')
+                .get();
 
             if (snapshot.size > 0) {
                 setInvoices(snapshot.map(doc => {
@@ -58,7 +63,7 @@ export function Search() {
                 }));
             }
         })();
-    }, [query.get('q')]);
+    }, [user, query.get('q')]);
 
     if (loading) {
         return <div class="loading">Loading...</div>;
@@ -108,7 +113,7 @@ export function Search() {
                         <p>{i?.status === 'paid' ? 'Paid' : 'Draft'}</p>
                     </div>
                     <div>
-                        <p>{i?.timestamp.toDate().toString()}</p>
+                        <p>{i?.timestamp && i?.timestamp.toDate().toString()}</p>
                     </div>
                 </div>)}
             </div>}
