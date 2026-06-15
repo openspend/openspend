@@ -36,8 +36,17 @@ export default function Home({ user }) {
                             Keep it simple stupid
                         </h1>
                         <p className="mt-5 text-lg text-gray-600 max-w-lg">
-                            Get paid in just a few clicks
+                            Get paid in just a few steps
                         </p>
+                        <p className="mt-5 text-lg text-gray-600 max-w-lg">
+                            No onboarding required.
+                        </p>
+                        <ol className="ml-5 mt-5 text-lg text-gray-600 max-w-lg list-decimal">
+                            <li>Sign up</li>
+                            <li>Add Money</li>
+                            <li>Send invoice</li>
+                            <li>Get paid</li>
+                        </ol>
 
                         <div className="mt-8 flex gap-4">
 
