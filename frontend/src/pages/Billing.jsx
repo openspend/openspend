@@ -17,6 +17,7 @@ export default function Billing() {
     const location = useLocation();
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState(null);
+    const [userObj, setUserObj] = useState(null);
     const [userBrand, setUserBrand] = useState(null);
     const [brand, setBrand] = useState(null);
     const [amount, setAmount] = useState(0);
@@ -45,6 +46,15 @@ export default function Billing() {
 
     useEffect(() => {
         if (!user) return;
+
+        (async () => {
+            const userDoc = await db.collection('users').doc(user.id).get();
+            const userObj = {
+                id: userDoc.id,
+                ...userDoc.data(),
+            };
+            setUserObj(userObj);
+        })();
 
         (async () => {
             const userBrandDoc = await db.collection('brands').doc(user.id).get();
@@ -112,7 +122,7 @@ export default function Billing() {
 
         <p>OpenSpend uses OpenSpend to manage billing.</p>
 
-        <p>Your current balance is: <span>$0</span></p>
+        <p>Your current balance is: <span>{brand?.currencySymbol || '$'}{userObj?.balance || '0'}</span></p>
 
         <p>How much would you like to add?</p>
         <div class="flex flex-wrap items-center justify-center gap-2">
