@@ -201,8 +201,14 @@ export function Invoice() {
 
         setTimeout(() => {
             // Initialize EasyQRCodeJS
+            let baseUrl = import.meta.env.VITE_FRONTEND_URL;
+
+            if (baseUrl === 'https://openspend.riamu.io') {
+                baseUrl = 'https://app.openspend.riamu.io';
+            }
+
             const options = {
-                text: import.meta.env.VITE_FRONTEND_URL + `/pay/${invoiceId}`,
+                text: baseUrl + `/pay/${invoiceId}`,
             };
 
             qrInstance.current = new QRCode(qrCodeRef.current, options);
