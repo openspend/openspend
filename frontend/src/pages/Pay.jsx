@@ -119,7 +119,7 @@ export function Pay() {
 
     return (
         <div class="w-full flex flex-col items-center p-2">
-            <p class="mb-10 text-4xl text-center">Send an Interac e-transfer</p>
+            <p class="mb-10 text-4xl text-center">Send money by email (use Zelle or Interac)</p>
             <button
                 class="px-4 py-2 bg-blue-600 text-3xl text-white rounded hover:bg-blue-700 transition"
                 onClick={() => setOpen(true)}
