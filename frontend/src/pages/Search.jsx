@@ -1,45 +1,46 @@
 import { useEffect, useState } from 'preact/hooks';
+import { useLocation } from 'preact-iso';
+import { db } from '../postbase';
+
+function useQuery() {
+    const location = useLocation();
+    return new URLSearchParams(location.url.split('?')[1]);
+}
 
 export function Search() {
-    const [code, setCode] = useState("")
-    const [email, setEmail] = useState("");
-    const [currency, setCurrency] = useState("CAD");
-    const [currencySymbol, setCurrencySymobol] = useState("$");
-    const [amount, setAmount] = useState(0.01);
+    const query = useQuery();
+    const [invoices, setInvoices] = useState([]);
 
-    const search = async (event) => {
-        event.preventDefault();
+    useEffect(() => {
+        const q = query.get('q');
 
-        const uniqueIdentifier = generateSixDigitAlphanumeric();
-        const formData = {
-            email: `DASVILLEDA+${uniqueIdentifier}@GMAIL.COM`,
-            currency,
-            currencySymbol,
-            amount,
-            uniqueIdentifier,
-        }
+        if (!q) return;
 
-        const resp = await fetch(import.meta.env.VITE_API_BASE + '/invoice', {
-            method: 'POST',
-            body: JSON.stringify(formData),
-        });
+        (async () => {
+            const snapshot = await db.collection('invoices')
+                .where('uniqueIdentifier', 'LIKE', q)
+                .get();
 
-        const data = await resp.json();
-        const invoiceId = data.id;
-
-        // generate qr code
-    };
+            if (snapshot.size > 0) {
+                setInvoices(snapshot.map(doc => {
+                    return {
+                        id: doc.id,
+                        ...doc.data(),
+                    };
+                }));
+            }
+        })();
+    }, [query.get('q')]);
 
     return (
         <div class="w-full flex flex-col items-center">
             <p class="mt-4 mb-10 text-4xl text-center">Search</p>
 
-            <form onSubmit={search}>
+            <form method="get" action="/search">
                 <div class="flex gap-2">
                     <input name="q"
-                        placeholder="Search Keywords or Invoice Identifier"
-                        class="min-w-40 md:min-w-100 border-1 p-4"
-                        onChange={e => setAmount(e.target.value)} />
+                        placeholder="Search by invoice identifier (T5H3R5)"
+                        class="min-w-40 md:min-w-100 border-1 p-4" />
 
                     <button
                         type="submit"
@@ -48,6 +49,37 @@ export function Search() {
                     </button>
                 </div>
             </form>
+
+            {invoices && <div>
+                <div class="mt-10 mb-4 min-w-150 text-center grid grid-cols-4 border-b-1">
+                    <div>
+                        <p>Id</p>
+                    </div>
+                    <div>
+                        <p>Amount</p>
+                    </div>
+                    <div>
+                        <p>Status</p>
+                    </div>
+                    <div>
+                        <p>Date Time</p>
+                    </div>
+                </div>
+                {invoices.map(i => <div class="mt-2 min-w-150 text-center grid grid-cols-4">
+                    <div>
+                        <p class="font-bold">{i?.uniqueIdentifier}</p>
+                    </div>
+                    <div>
+                        <p>${i?.amount} + tax</p>
+                    </div>
+                    <div>
+                        <p>{i?.status === 'paid' ? 'Paid' : 'Draft'}</p>
+                    </div>
+                    <div>
+                        <p>{i?.timestamp.toDate().toString()}</p>
+                    </div>
+                </div>)}
+            </div>}
         </div>
     );
 }
