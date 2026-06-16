@@ -23,9 +23,6 @@ async function sendEmail(req, res) {
 	try {
 		const { invoiceId, email } = req.body;
 
-		let subject = `Invoice`;
-		let html = ``;
-
 		const invoiceDoc = await db.collection('invoices').doc(invoiceId).get();
 		const invoice = invoiceDoc.data();
 
@@ -59,11 +56,13 @@ async function sendEmail(req, res) {
 
 		const taxesHtml = taxesHtml_.join('\n\n');
 
-		html += `<!DOCTYPE html>
+		const subject = `Invoice from ${brand.name || 'OpenSpend'}`;
+
+		const html = `<!DOCTYPE html>
 				<html>
 					<head>
 						<meta charset="utf-8" />
-						<title>A simple, clean, and responsive HTML invoice template</title>
+						<title>Invoice from ${brand.name || 'OpenSpend'}</title>
 
 						<style>
 							.invoice-box {
@@ -183,9 +182,11 @@ async function sendEmail(req, res) {
 										<table>
 											<tr>
 												<td>
-													Maria Jenny<br />
-													1661 Rue Berri<br />
-													Montréal, QC H2L 0A9
+													${brand?.name}<br />
+													${brand?.address?.street}<br />
+													${brand?.address?.unit}<br />
+													${brand?.address?.city}, ${brand?.address?.state} ${brand?.address?.zipcode}<br />
+													${brand?.address?.country}
 												</td>
 											</tr>
 										</table>
