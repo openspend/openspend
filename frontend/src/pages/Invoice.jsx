@@ -161,7 +161,7 @@ export function Invoice() {
             amountDecimal = parseFloat(amount);
         }
 
-        if (!userObj.hasOwnProperty('balance') || userObj.balance < (amount * 0.329)) {
+        if (!userObj.hasOwnProperty('balance') || userObj.balance < (amount * 0.129)) {
             alert('Insufficient balance. Please add money to your account from billing\'s page');
             return;
         }
@@ -198,7 +198,7 @@ export function Invoice() {
         const invoiceDoc = await db.collection('invoices').add(formData);
         const invoiceId = invoiceDoc.id;
 
-        const newBalance = userObj.balance - (amount * 0.329);
+        const newBalance = userObj.balance - (amount * 0.129);
         await db.collection('users').doc(user.id).set({ balance: newBalance }, { merge: true });
 
         location.route(`/invoice/${invoiceId}`);
