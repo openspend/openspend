@@ -28,6 +28,14 @@ export function Settings() {
         // }
     );
     const buttonRef = useRef(null);
+    const [addressData, setAddressData] = useState({
+        street1: "",
+        street2: "",
+        city: "",
+        state: "",
+        postalCode: "",
+        country: "",
+    });
 
     useEffect(() => {
         setLoading(false);
@@ -79,7 +87,12 @@ export function Settings() {
             const formData = new FormData(event.target);
             const data = Object.fromEntries(formData.entries());
 
-            await db.collection('brands').doc(user.id).set(data, { merge: true });
+            let obj = data;
+            if (data.hasOwnProperty('street')) {
+                obj = { address: data };
+            }
+
+            await db.collection('brands').doc(user.id).set(obj, { merge: true });
         } catch (err) {
 
         } finally {
@@ -164,7 +177,8 @@ export function Settings() {
 
             <div class="w-full md:w-150 p-2">
                 <div class="">
-                    <h3 class="mt-4 mb-10 text-3xl text-center">Brand / Company Name</h3>
+                    <h3 class="mt-8 mb-4 text-3xl text-center">Brand / Company Name</h3>
+                    <p class="text-sm py-2">This is the contact name customers will use to save your email in their online banking app.</p>
                     <form class="w-full grid grid-cols-3 gap-2" onSubmit={update}>
                         <input name="name" placeholder="Brand or Company Name" value={brand?.name}
                             class="col-span-2 p-4 border-1" onChange={handleChange} />
@@ -174,11 +188,78 @@ export function Settings() {
                         </button>
                     </form>
                 </div>
-                <p class="text-sm">This is the contact name customers will use to save your email in their online banking app.</p>
             </div>
 
             <div class="w-full md:w-150 p-2">
-                <h3 class="mt-4 mb-10 text-3xl text-center">Email for Deposit</h3>
+                <div class="">
+                    <h3 class="mt-8 mb-4 text-3xl text-center">Address</h3>
+                    <p class="text-sm text-center py-2">This is the address put on invoice for your customers.</p>
+                    <form class="w-full" onSubmit={update}>
+                        <div class="bg-white rounded-lg w-full relative">
+                            {/* Address Fields */}
+                            <div class="space-y-2">
+                                <input
+                                    name="street"
+                                    placeholder="Street address"
+                                    value={brand?.address?.street}
+                                    class="w-full border px-3 py-2"
+                                />
+
+                                <input
+                                    name="unit"
+                                    placeholder="Apartment, suite, unit (optional)"
+                                    value={brand?.address?.unit}
+                                    class="w-full border px-3 py-2"
+                                />
+
+                                <div class="grid grid-cols-2 gap-2">
+                                    <input
+                                        name="city"
+                                        placeholder="City"
+                                        value={brand?.address?.city}
+                                        class="border px-3 py-2"
+                                    />
+
+                                    <input
+                                        name="state"
+                                        placeholder="State / Province"
+                                        value={brand?.address?.state}
+                                        class="border px-3 py-2"
+                                    />
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2">
+                                    <input
+                                        name="zipcode"
+                                        placeholder="ZIP / Postal Code"
+                                        value={brand?.address?.zipcode}
+                                        class="border px-3 py-2"
+                                    />
+
+                                    <input
+                                        name="country"
+                                        placeholder="Country"
+                                        value={brand?.address?.country}
+                                        class="border px-3 py-2"
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="flex gap-3 mt-2">
+                                <button
+                                    type="submit"
+                                    class="flex-1 bg-blue-600 text-white py-4 rounded"
+                                    onClick={e => buttonRef.current = e.target}>
+                                    Update
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="w-full md:w-150 p-2">
+                <h3 class="mt-8 mb-4 text-3xl text-center">Email for Deposit</h3>
                 <form class="flex flex-col gap-2" onSubmit={update}>
                     <div class="w-full grid grid-cols-3 gap-2">
                         <input name="depositEmail" placeholder="Email for online banking deposit (Interac for Canada)"
@@ -202,7 +283,7 @@ export function Settings() {
             </div>
 
             <div class="w-full md:w-150 p-2">
-                <h3 class="mt-4 mb-10 text-3xl text-center">Currency</h3>
+                <h3 class="mt-8 mb-4 text-3xl text-center">Currency</h3>
                 <form class="flex flex-col gap-2" onSubmit={update}>
                     <p>Currency Symbol ($, €, etc)</p>
                     <input name="currencySymbol" placeholder="$" value={brand?.currencySymbol}
@@ -218,7 +299,7 @@ export function Settings() {
             </div>
 
             <div class="p-2">
-                <h3 class="mt-4 mb-10 text-3xl text-center">Taxes</h3>
+                <h3 class="mt-8 mb-4 text-3xl text-center">Taxes</h3>
 
                 <div class="grid grid-cols-3 gap-2 border-b-1 mb-2">
                     <p>Tax Name</p>
