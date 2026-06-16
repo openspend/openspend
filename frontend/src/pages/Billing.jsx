@@ -21,6 +21,7 @@ export default function Billing() {
     const [userBrand, setUserBrand] = useState(null);
     const [brand, setBrand] = useState(null);
     const [amount, setAmount] = useState(0);
+    const [suggestedBalance, setSuggestedBalance] = useState(Math.ceil(375 * 0.329));
 
     useEffect(() => {
         setLoading(false);
@@ -127,7 +128,7 @@ export default function Billing() {
         <p>OpenSpend uses OpenSpend to manage billing.</p>
 
         <p>Your current balance is: <span>{brand?.currencySymbol || '$'}{(userObj?.balance || 0).toFixed(2)}</span></p>
-
+        
         <p>How much would you like to add?</p>
         <div class="flex flex-wrap items-center justify-center gap-2">
             {series.map(s => <button class="border-1 px-4 py-3 cursor-pointer hover:bg-gray-400" onClick={e => createInvoice(s)}>${s}</button>)}
@@ -135,7 +136,17 @@ export default function Billing() {
 
         <input name="amount" type="number" min="110" step="10" class="border-1 w-80 px-2 py-3" placeholder="Custom Amount ($1500)" onChange={e => setAmount(e.target.value)} />
         <button class="bg-blue-600 text-white text-lg border-1 px-8 py-3 rounded" onClick={e => createInvoice(amount)}>Create Invoice</button>
-
+    
         <p>All prices are in {brand?.currency || 'USD'}</p>
+
+        <div class="flex flex-col items-center gap-1">
+            <p>What's your anticipated sales volume? (Optional)</p>
+            <p class="text-xs md:text-sm lg:text-sm px-6">
+                For example, if your product costs $15 and you anticipate 25 items to be sold</p>
+            <p class="text-xs md:text-sm lg:text-sm px-6">so your sales volume becomes 15 * 25 = 375</p>
+            <input type="number" value="375" class="border-1 w-80 px-2 py-3" onChange={e => setSuggestedBalance(Math.ceil(e.target.value * 0.329))} />
+            <p>Suggested balance: ${suggestedBalance}</p>
+        </div>
+
     </div>;
 }
