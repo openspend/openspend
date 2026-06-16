@@ -17,7 +17,7 @@ export default function Header({ user }) {
                 <a href="/" className="text-2xl font-extrabold text-blue-600 mb-4 md:mb-0">OpenSpend</a>
                 <nav className="flex gap-8 text-lg font-medium items-center justify-center">
                     <a href="#kiss" className="text-blue-600 hover:underline">KISS</a>
-                    <a href="#payg" className="text-blue-600 hover:underline">Simple Pricing (PAYG)</a>
+                    <a href="#payg" className="text-blue-600 hover:underline">PAYG Pricing</a>
                     <a href="#why" className="text-blue-600 hover:underline">Why OpenSpend?</a>
                 </nav>
 
