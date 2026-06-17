@@ -10,7 +10,7 @@ export default function Home({ user }) {
                             <span className="text-blue-600">that just works.</span>
                         </h1>
                         <p className="mt-5 text-lg text-gray-600 max-w-lg">
-                            Open-source and Low-cost invoicing software for creators, freelancers, popup shops and small businesses with guided Zelle and Interac Canada integrations
+                            Open-source and Low-cost invoicing software for <i>creators, freelancers, popup shops</i> and <i>small businesses</i> with guided Zelle and Interac Canada integrations
                         </p>
                         <p className="mt-6 text-2xl">
                             Stripe 💔 | PayPal 💔 | OpenSpend ❤️
