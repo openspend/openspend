@@ -16,8 +16,9 @@ export default function Home({ user }) {
                             Stripe 💔 | PayPal 💔 | OpenSpend ❤️
                         </p>
 
-                        <div className="mt-8 flex gap-4">
-                            <a href="https://app.openspend.riamu.io" className="bg-blue-600 text-white px-6 py-3 rounded-md font-medium shadow hover:bg-blue-700 transition">Try Now</a>
+                        <div className="mt-8 flex flex-col gap-2">
+                            <a href="https://app.openspend.riamu.io" className="w-max bg-blue-600 text-white px-6 py-3 rounded-md font-medium shadow hover:bg-blue-700 transition">Try for free</a>
+                            <p>No credit card required</p>
                         </div>
                     </div>
 
