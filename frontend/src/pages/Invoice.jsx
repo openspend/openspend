@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'preact/hooks';
-import { useLocation, useRoute } from "preact-iso";
+import { useRoute } from "preact-iso";
 import QRCode from 'easyqrcodejs';
 import { db } from '../postbase';
 import { Timestamp } from '../../lib/postbase/db';
@@ -14,7 +14,6 @@ export const INVOICE_STATUS = {
 
 export function Invoice() {
     const { params } = useRoute();
-    const location = useLocation();
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState(null);
     const [userObj, setUserObj] = useState(null);
@@ -201,7 +200,9 @@ export function Invoice() {
         const newBalance = userObj.balance - (amount * 0.129);
         await db.collection('users').doc(user.id).set({ balance: newBalance }, { merge: true });
 
-        location.route(`/invoice/${invoiceId}`);
+        if (typeof window !== 'undefined') {
+            window.location.href = `/invoice/${invoiceId}`;
+        }
     };
 
     const generateQrCode = (invoiceId) => {
@@ -246,7 +247,9 @@ export function Invoice() {
                 status: INVOICE_STATUS.PAID,
                 updatedOn: Timestamp.now(),
             }, { merge: true });
-            location.route(`/invoice/${invoice.id}`);
+            if (typeof window !== 'undefined') {
+                window.location.href = `/invoice/${invoice.id}`;
+            }
         }
     };
 
