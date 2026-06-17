@@ -10,7 +10,7 @@ export default function Home({ user }) {
                             <span className="text-blue-600">that just works.</span>
                         </h1>
                         <p className="mt-5 text-lg text-gray-600 max-w-lg">
-                            Self-Hosted open-source invoicing software with built-in online bank transfer support (Zelle, Interac Canada, etc)
+                            Open-source invoicing software for creators, freelancers and small businesses
                         </p>
                         <p className="mt-6 text-2xl">
                             Stripe 💔 | PayPal 💔 | OpenSpend ❤️
@@ -71,9 +71,6 @@ export default function Home({ user }) {
                         <h1 className="text-5xl font-extrabold leading-tight text-gray-900">
                             Pay-as-you-go
                         </h1>
-                        <p className="mt-5 text-lg text-gray-600 max-w-lg">
-                            0% commissions, $0 fees
-                        </p>
                         <p className="mt-2 text-lg text-gray-600 max-w-lg">
                             $0.129 per dollar of invoice
                         </p>
