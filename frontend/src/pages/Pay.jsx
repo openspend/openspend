@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { useRoute } from "preact-iso";
 import { MdCopyAll } from 'react-icons/md';
 import { db } from '../postbase';
 import { INVOICE_STATUS } from './Invoice';
 import { documentId } from '../../lib/postbase/db';
-
+import { getAuth } from '../auth';
 
 export function Pay() {
     const { params } = useRoute();
     const [open, setOpen] = useState(false);
+    const [user, setUser] = useState(null);
     const [invoice, setInvoice] = useState({
         name: '',
         email: '',
@@ -21,6 +22,21 @@ export function Pay() {
         status: INVOICE_STATUS.DRAFT,
     });
     const [email, setEmail] = useState('');
+    const buttonRef = useRef(null);
+
+    useEffect(() => {
+        const auth = getAuth();
+
+        if (!user) {
+            setUser(auth.currentUser);
+        }
+
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+            setUser(user);
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     useEffect(() => {
         if (!params?.invoiceId) return;
@@ -78,8 +94,12 @@ export function Pay() {
         });
     };
 
-    const sendInvoiceByEmail = async () => {
+    const sendInvoiceByEmail = async (event) => {
+        event.preventDefault();
+
         if (!email) return;
+
+        if (buttonRef?.current) buttonRef.current.innerText = '✅ Sent';
 
         await fetch(import.meta.env.VITE_API_BASE + '/email/new', {
             method: 'post',
@@ -87,7 +107,27 @@ export function Pay() {
             body: JSON.stringify({ invoiceId: invoice.id, email }),
         });
 
-        alert('Email Sent!');
+        setTimeout(() => {
+            if (buttonRef?.current) buttonRef.current.innerText = 'Send';
+        }, 2000);
+    };
+
+    const saveInvoice = async (event) => {
+        if (!user) {
+            alert('Please create an account or login');
+            return;
+        }
+
+        buttonRef.current = event.currentTarget || event.target;
+        buttonRef.current.innerText = '✅ Saved';
+
+        await db.collection('invoices').doc(params?.invoiceId).set(
+            { customer: db.collection('users').doc(user.id) },
+            { merge: true });
+
+        setTimeout(() => {
+            if (buttonRef?.current) buttonRef.current.innerText = 'Save';
+        }, 2000);
     };
 
     if (invoice?.status === INVOICE_STATUS.PAID) {
@@ -108,11 +148,22 @@ export function Pay() {
 
                         <button
                             type="submit"
-                            class="px-4 py-2 bg-blue-600 text-3xl text-white rounded hover:bg-blue-700 transition">
+                            class="px-4 py-2 bg-blue-600 text-3xl text-white rounded hover:bg-blue-700 transition"
+                            onClick={e => buttonRef.current = e.target}>
                             Send
                         </button>
                     </div>
                 </form>
+                <p class="my-10 text-4xl">Or</p>
+                <div>
+                    <p class="text-4xl">Save to your account</p>
+                    <button
+                        type="submit"
+                        class="my-8 px-4 py-2 bg-blue-600 text-3xl text-white rounded hover:bg-blue-700 transition"
+                        onClick={saveInvoice}>
+                        Save
+                    </button>
+                </div>
             </div>
         </div>;
     }

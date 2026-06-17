@@ -43,6 +43,7 @@ export function Search() {
         const q = query.get('q');
 
         (async () => {
+            // TODO: Add OR filer by customer === users.ref
             let query = db.collection('invoices')
                 .where('brand', '==', db.collection('brands').doc(user.id));
 
