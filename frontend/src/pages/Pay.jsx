@@ -132,7 +132,12 @@ export function Pay() {
 
     if (invoice?.status === INVOICE_STATUS.PAID) {
         return <div class="w-full flex flex-col items-center">
-            <div class="my-8">
+            <div class="mt-8 mb-16 flex flex-col items-center gap-1">
+                <p class="text-sm font-semibold">Code</p>
+                <p class="text-6xl">{invoice?.uniqueIdentifier}</p>
+            </div>
+
+            <div class="mb-8">
                 <p class="text-4xl">Status: <span class="text-green-600">Paid</span></p>
             </div>
 
