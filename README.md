@@ -23,3 +23,7 @@ To login to bank website, business owner setup OpenSpend to use an .env file wit
 ## Demo
 
 ![Screencast](https://github.com/openspend/openspend/raw/main/assets/img/app.openspend.riamu.io.png?raw=true)
+
+## Commercial License
+
+Commercial licenses are available, please fill out the form our [https://openspend.riamu.io](https://openspend.riamu.io)
