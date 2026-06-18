@@ -326,6 +326,7 @@ export function Invoice() {
                             <div>
                                 <div ref={qrCodeRef}></div>
                             </div>
+                            <p>One-time use only</p>
                         </button>}
                     </div>
 
