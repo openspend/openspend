@@ -199,7 +199,7 @@ export default function Home({ user }) {
                         </div>
                         <button type="submit" class="p-4 bg-blue-600 text-white font-semibold hover:bg-blue-400 cursor-pointer rounded shadow"
                             onClick={e => buttonRef.current = e.target}
-                            disabled={buttonRef?.current && buttonRef.current.innerText === 'Submitting'}>
+                            disabled={buttonRef?.current && buttonRef.current.innerText !== 'Submit'}>
                             Submit
                         </button>
                     </form>
