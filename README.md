@@ -1,16 +1,8 @@
-[<img src="https://i.imgur.com/oRFWBv7.png" height="80px" />](https://buymeacoffee.com/umrashrf)
-
-Or scroll down to the demo and follow the instructions to buy me a coffee!
-
-![Open Spend Logo](https://github.com/openspend/openspend/blob/main/logo.png?raw=true)
+![Open Spend Logo](https://github.com/openspend/openspend/blob/main/assets/img/OpenSpend.riamu.io.png?raw=true)
 
 # Open Spend 💸
 
 How about a payment gateway without a middle man like PayPal, Stripe, 2Checkout, etc?
-
-## Demo
-
-![Screencast](https://github.com/openspend/openspend/raw/main/screencast.gif)
 
 ## What is OpenSpend?
 
@@ -27,3 +19,7 @@ The trick is to use a different email address for every user/customer like payme
 Read more how Resend's webhook can be used for this purpose https://resend.com/docs/dashboard/receiving/introduction
 
 To login to bank website, business owner setup OpenSpend to use an .env file with predefined username and password. It doesn't need to work for all the banks to begin with. Just one widely used bank. It will be tricky to use banks which enforce two-factor authentication (2FA).
+
+## Demo
+
+![Screencast](https://github.com/openspend/openspend/raw/main/assets/img/app.openspend.riamu.io.png?raw=true)
