@@ -1,4 +1,32 @@
+import { useRef } from "preact/hooks";
+
 export default function Home({ user }) {
+    const buttonRef = useRef(null);
+
+    const scheduleDemo = async (event) => {
+        event.preventDefault();
+
+        try {
+            if (buttonRef?.current) buttonRef.current.innerText = 'Submitting...';
+
+            const formData = new FormData(event.target);
+            const obj = Object.fromEntries(formData.entries());
+
+            await fetch(import.meta.env.VITE_API_BASE + '/email/demo', {
+                method: 'post',
+                body: JSON.stringify(obj),
+            });
+
+            if (buttonRef?.current) buttonRef.current.innerText = '✅ Success';
+        } catch (err) {
+            if (buttonRef?.current) buttonRef.current.innerText = 'Error';
+
+            setTimeout(() => {
+                if (buttonRef?.current) buttonRef.current.innerText = 'Submit';
+            }, 2000);
+        }
+    };
+
     return (
         <main className="text-gray-800">
             {/* HERO */}
@@ -95,7 +123,7 @@ export default function Home({ user }) {
                 </div>
             </section>
 
-            {/* FEATURES */}
+            {/* WHY */}
             <section id="why" className="bg-white pt-24 pb-32">
                 <div className="max-w-6xl mx-auto px-6 text-center">
                     <h2 className="text-3xl font-bold mb-12 text-gray-900">Why OpenSpend?</h2>
@@ -125,6 +153,57 @@ export default function Home({ user }) {
                             </div>
                         ))}
                     </div>
+                </div>
+            </section>
+
+            <section id="demo" className="bg-white pt-24 pb-32">
+                <div className="max-w-6xl mx-auto px-6 text-center">
+                    <h2 className="text-3xl font-bold mb-12 text-gray-900">Schedule a Demo</h2>
+                    <form onSubmit={scheduleDemo} className="w-max m-auto grid grid-cols-2 gap-10 bg-gray-50 border rounded-lg p-8 shadow-sm hover:shadow transition">
+                        {[
+                            {
+                                name: "name",
+                                desc: "Your full name",
+                                //icon: "🧩"
+                            },
+                            {
+                                name: "company",
+                                desc: "Your company name",
+                                //icon: "💳"
+                            },
+                            {
+                                name: "email",
+                                desc: "Your work or business email address",
+                                //icon: "⚡"
+                            },
+                            {
+                                name: "phone",
+                                desc: "Your work or business phone number",
+                                //icon: "⚡"
+                            }
+
+                        ].map(f => (
+                            <div key={f.name} className="flex flex-col gap-4">
+                                {/* <div className="text-4xl mb-3">{f.icon}</div> */}
+                                <label className="text-gray-600 font-semibold">{f.desc}</label>
+                                <input name={f.name} class="border-1 px-4 py-2" required />
+                            </div>
+                        ))}
+                        <div className="flex flex-col gap-4">
+                            <label>When would you like this demo?</label>
+                            <select name="urgency" class="border-1 px-4 py-2">
+                                <option value="Low Priority">No rush</option>
+                                <option value="ASAP">As soon as possible</option>
+                                <option value="Urgent">It's urgent</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="p-4 bg-blue-600 text-white font-semibold hover:bg-blue-400 cursor-pointer rounded shadow"
+                            onClick={e => buttonRef.current = e.target}
+                            disabled={buttonRef?.current && buttonRef.current.innerText === 'Submitting'}>
+                            Submit
+                        </button>
+                    </form>
+                    <p>All fields are required</p>
                 </div>
             </section>
         </main>

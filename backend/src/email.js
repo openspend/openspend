@@ -240,8 +240,66 @@ async function sendEmail(req, res) {
 	}
 }
 
+async function requestDemoEmail(req, res) {
+	const formData = req.body;
+	const name = formData?.name;
+	const company = formData?.companyName;
+	const subject = `[${formData?.urgency}] New Demo Request from ${name} at ${company}`;
+	const html = `<table>
+                <tr>
+                    <td>
+                        <b>Name</b>
+                    </td>
+                    <td>
+                        ${formData?.name}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Email</b>
+                    </td>
+                    <td>
+                        ${formData?.email}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Phone</b>
+                    </td>
+                    <td>
+                        ${formData?.phone}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Company</b>
+                    </td>
+                    <td>
+                        ${formData?.company}
+                    </td>
+                </tr>
+				<tr>
+                    <td>
+                        <b>Urgency</b>
+                    </td>
+                    <td>
+                        ${formData?.urgency}
+                    </td>
+                </tr>
+            </table>`;
+
+	const emailOpts = {
+		from: process.env.SMTP_FROM_EMAIL,
+		to: 'umair@openspend.riamu.io',
+		subject,
+		html,
+	};
+
+	await transporter.sendMail(emailOpts);
+
+	res.status(200).json({ status: 'ok' });
+}
+
 export const emailRouter = express.Router();
 emailRouter.post('/new', sendEmail);
-
-// Only for debugging
-//emailRouter.get('/showip', showLocation);
+emailRouter.post('/demo', requestDemoEmail);
