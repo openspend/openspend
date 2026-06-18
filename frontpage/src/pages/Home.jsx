@@ -14,6 +14,9 @@ export default function Home({ user }) {
 
             await fetch(import.meta.env.VITE_API_BASE + '/email/demo', {
                 method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify(obj),
             });
 
