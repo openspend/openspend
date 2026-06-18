@@ -322,8 +322,7 @@ export function Invoice() {
                     </div>
 
                     <div class="mt-8">
-                        {showQrCode && <button class="w-full flex items-center justify-center"
-                            onClick={e => setShowQrCode(false)}>
+                        {showQrCode && <button class="w-full flex flex-col items-center justify-center">
                             <div>
                                 <div ref={qrCodeRef}></div>
                             </div>
