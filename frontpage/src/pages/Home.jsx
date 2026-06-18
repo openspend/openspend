@@ -2,15 +2,15 @@ export default function Home({ user }) {
     return (
         <main className="text-gray-800">
             {/* HERO */}
-            <section className="bg-gradient-to-br from-blue-50 to-white pt-24 pb-32">
+            <section className="bg-gradient-to-br from-blue-50 to-white pt-10 pb-32">
                 <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-10">
                     <div>
                         <h1 className="text-5xl font-extrabold leading-tight text-gray-900">
-                            Invoicing ❤️<br />
-                            <span className="text-blue-600">that just works.</span>
+                            Invoicing for <br />
+                            <span className="text-blue-600">creators, <br />freelancers, <br />popup shops ❤️<br /></span>
                         </h1>
-                        <p className="mt-5 text-lg text-gray-600 max-w-lg">
-                            Open-source and Low-cost invoicing software for <i>creators, freelancers, popup shops</i> and <i>small businesses</i> with guided Zelle and Interac Canada integrations
+                        <p className="mt-5 text-3xl text-gray-600 max-w-lg">
+                            Low-cost invoicing software for <span className="text-blue-600">creators, freelancers, popup shops</span> and <span className="text-blue-600">small businesses</span> with guided Zelle and Interac Canada integrations.
                         </p>
                         <p className="mt-6 text-2xl">
                             Stripe 💔 | PayPal 💔 | OpenSpend ❤️
@@ -95,7 +95,7 @@ export default function Home({ user }) {
             </section>
 
             {/* FEATURES */}
-            <section id="why" className="bg-white py-24">
+            <section id="why" className="bg-white pt-24 pb-32">
                 <div className="max-w-6xl mx-auto px-6 text-center">
                     <h2 className="text-3xl font-bold mb-12 text-gray-900">Why OpenSpend?</h2>
                     <div className="grid md:grid-cols-3 gap-10">
