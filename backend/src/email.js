@@ -243,7 +243,7 @@ async function sendEmail(req, res) {
 async function requestDemoEmail(req, res) {
 	const formData = req.body;
 	const name = formData?.name;
-	const company = formData?.companyName;
+	const company = formData?.company;
 	const subject = `[${formData?.urgency}] New Demo Request from ${name} at ${company}`;
 	const html = `<table>
                 <tr>
