@@ -248,29 +248,45 @@ export function Pay() {
                         </div>
                     </div>
 
-                    <div>
-                        <h3 class="mt-6 font-bold text-gray-500">Security Question (Optional):</h3>
-                        <div class="relative flex items-center justify gap-2">
-                            <p class="text-lg text-gray-700 font-bold w-full">Code</p>
-                            <button class="absolute right-0 hover:bg-gray-300 rounded"
-                                title="Copy Question"
-                                onClick={e => copyToClipboard(e, "Code")}>
-                                <MdCopyAll size={24} />
-                            </button>
+                    {invoice?.currency === 'USD'
+                        ? <div>
+                            <div>
+                                <h3 class="mt-6 font-bold text-gray-500">Memo (Mandatory):</h3>
+                                <div class="relative flex items-center justify gap-2">
+                                    <p class="text-lg text-gray-700 font-bold w-full">Code: {invoice?.uniqueIdentifier}</p>
+                                    <button class="absolute right-0 hover:bg-gray-300 rounded"
+                                        title="Copy Answer"
+                                        onClick={e => copyToClipboard(e, 'Code: ' + invoice?.uniqueIdentifier)}>
+                                        <MdCopyAll size={24} />
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        : <div>
+                            <div>
+                                <h3 class="mt-6 font-bold text-gray-500">Security Question (Optional):</h3>
+                                <div class="relative flex items-center justify gap-2">
+                                    <p class="text-lg text-gray-700 font-bold w-full">Code</p>
+                                    <button class="absolute right-0 hover:bg-gray-300 rounded"
+                                        title="Copy Question"
+                                        onClick={e => copyToClipboard(e, "Code")}>
+                                        <MdCopyAll size={24} />
+                                    </button>
+                                </div>
+                            </div>
 
-                    <div>
-                        <h3 class="mt-6 font-bold text-gray-500">Security Answer (Optional):</h3>
-                        <div class="relative flex items-center justify gap-2">
-                            <p class="text-lg text-gray-700 font-bold w-full">{invoice?.uniqueIdentifier}</p>
-                            <button class="absolute right-0 hover:bg-gray-300 rounded"
-                                title="Copy Answer"
-                                onClick={e => copyToClipboard(e, invoice?.uniqueIdentifier)}>
-                                <MdCopyAll size={24} />
-                            </button>
-                        </div>
-                    </div>
+                            <div>
+                                <h3 class="mt-6 font-bold text-gray-500">Security Answer (Optional):</h3>
+                                <div class="relative flex items-center justify gap-2">
+                                    <p class="text-lg text-gray-700 font-bold w-full">{invoice?.uniqueIdentifier}</p>
+                                    <button class="absolute right-0 hover:bg-gray-300 rounded"
+                                        title="Copy Answer"
+                                        onClick={e => copyToClipboard(e, invoice?.uniqueIdentifier)}>
+                                        <MdCopyAll size={24} />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>}
 
                     <div class="flex justify-center mt-6">
                         <div class="w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
