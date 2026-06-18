@@ -138,6 +138,7 @@ export default function Billing() {
         <button class="bg-blue-600 text-white text-lg border-1 px-8 py-3 rounded" onClick={e => createInvoice(amount)}>Create Invoice</button>
 
         <p>All prices are in {brand?.currency || 'USD'}</p>
+        <p>Refund Policy: All transactions are final. Refund is not possible at the moment.</p>
 
         <div class="flex flex-col items-center gap-1">
             <p>What's your anticipated sales volume? (Optional)</p>
