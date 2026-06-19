@@ -52,6 +52,9 @@ export function Invoice() {
         status: INVOICE_STATUS.DRAFT,
     });
     const [tax, setTax] = useState(0);
+    const [total, setTotal] = useState(0);
+    const [savings, setSavings] = useState(0);
+
 
     useEffect(() => {
         setLoading(false);
@@ -135,6 +138,19 @@ export function Invoice() {
             };
             setInvoice(invoice);
             setAmount(invoice.amount);
+
+            const amount = invoice?.amount ?? 0;
+            const tax = invoice?.tax ?? 0
+
+            const total = amount + (amount * tax);
+            setTotal(total);
+
+            const feesOpenSpend = 0.129;
+            const feesStripe = 0.329;
+
+            const savings = (amount * feesStripe) - (amount * feesOpenSpend);
+            setSavings(savings);
+
             if (invoice.status === INVOICE_STATUS.DRAFT) {
                 generateQrCode(invoice.id);
             }
@@ -193,6 +209,7 @@ export function Invoice() {
             currency: brand?.currency || 'CAD',
             currencySymbol: brand?.currencySymbol || '$',
             amount: amountDecimal,
+            savings,
             tax: parseFloat((amount * tax).toFixed(2)),
             uniqueIdentifier,
             timestamp: Timestamp.now(),
@@ -288,12 +305,17 @@ export function Invoice() {
                 {brand && brand?.taxes
                     ? <div class="mt-10 flex flex-col gap-3 px-2 text-3xl">
                         {brand?.taxes.map(t => <p key={`${t.name}-${amount}`} class="text-center">{t.name}: {brand.currencySymbol}{(amount * t.percent).toFixed(2)}</p>)}
-                        <p key={`total-${amount}`} class="text-center">Total: {brand?.currencySymbol || '$'}{amount && (parseFloat(amount) + (amount * tax)).toFixed(2)}</p>
+                        <p key={`total-${amount}`} class="text-center">Total: {brand?.currencySymbol || '$'}{total.toFixed(2)}</p>
                     </div>
                     : <div class="mt-10 flex flex-col gap-3 px-2 text-3xl">
-                        <p key={`total-${amount}`} class="text-center">Total: {brand?.currencySymbol || '$'}{amount && (parseFloat(amount) + (amount * tax)).toFixed(2)}</p>
+                        <p key={`total-${amount}`} class="text-center">Total: {brand?.currencySymbol || '$'}{total.toFixed(2)}</p>
                     </div>
                 }
+
+                <div class="mt-5 text-center text-xl text-green-600">
+                    <p class="">You will save <b>{brand?.currencySymbol || '$'}{savings.toFixed(2)}</b></p>
+                    <p class="text-xs">in payment processing fees.</p>
+                </div>
             </form>
 
             {invoice?.status === INVOICE_STATUS.PAID
