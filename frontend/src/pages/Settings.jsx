@@ -9,23 +9,23 @@ export function Settings() {
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState(null);
     const [brand, setBrand] = useState(
-        // {
-        //     name: 'CasaZero',
-        //     depositEmail: 'dasvilleda@gmail.com',
-        //     currency: 'CAD',
-        //     currencySymbol: '$',
-        //     uniqueIdentifier: true,
-        //     taxes: [{
-        //         name: 'TVQ',
-        //         value: '9.975%',
-        //         percent: 9.975 / 100,
-        //     },
-        //     {
-        //         name: 'TPS',
-        //         value: '5%',
-        //         percent: 5 / 100,
-        //     }],
-        // }
+        {
+            //     name: 'CasaZero',
+            //     depositEmail: 'dasvilleda@gmail.com',
+            //     currency: 'CAD',
+            //     currencySymbol: '$',
+            //     uniqueIdentifier: true,
+            //     taxes: [{
+            //         name: 'TVQ',
+            //         value: '9.975%',
+            //         percent: 9.975 / 100,
+            //     },
+            //     {
+            //         name: 'TPS',
+            //         value: '5%',
+            //         percent: 5 / 100,
+            //     }],
+        }
     );
     const buttonRef = useRef(null);
     const [addressData, setAddressData] = useState({
@@ -93,6 +93,8 @@ export function Settings() {
             }
 
             await db.collection('brands').doc(user.id).set(obj, { merge: true });
+
+            setBrand({ ...brand, ...obj });
         } catch (err) {
 
         } finally {
@@ -273,7 +275,7 @@ export function Settings() {
                     <label>
                         <p class="text-sm">
                             <input name="uniqueIdentifier" type="checkbox"
-                                checked={brand?.uniqueIdentifier ?? true} disabled /> Add unique identifier to email for each transaction (Enabled by default)
+                                checked={brand?.uniqueIdentifier ?? brand?.currency !== 'USD'} disabled /> Add unique identifier to email for each transaction (Enabled by default)
                         </p>
                         <p class="ml-5 text-xs">
                             OpenSpend adds <i>+unique_identifier</i> suffix to your email part before @ to uniquely identify each transaction.

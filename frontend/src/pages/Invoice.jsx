@@ -168,9 +168,14 @@ export function Invoice() {
         const uniqueIdentifier = generateSixDigitAlphanumeric();
 
         let email = brand?.depositEmail;
-        if (email && (!brand.hasOwnProperty('uniqueIdentifier') || brand?.uniqueIdentifier)) {
-            let [emailUser, emailDomain] = email.split('@');
-            email = `${emailUser.toUpperCase()}+${uniqueIdentifier}@${emailDomain.toUpperCase()}`;
+
+        if (brand?.currency === 'USD') {
+            // for US Zelle, skip adding code to email
+        } else {
+            if (email && (!brand.hasOwnProperty('uniqueIdentifier') || brand?.uniqueIdentifier)) {
+                let [emailUser, emailDomain] = email.split('@');
+                email = `${emailUser.toUpperCase()}+${uniqueIdentifier}@${emailDomain.toUpperCase()}`;
+            }
         }
 
         const taxes = (brand?.taxes || []).map(t => t.percent);
