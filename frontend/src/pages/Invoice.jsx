@@ -36,7 +36,7 @@ export function Invoice() {
         //     }],
         // }
     );
-    const [amount, setAmount] = useState(15);
+    const [amount, setAmount] = useState('15');
     const qrCodeRef = useRef(null);
     const qrInstance = useRef(null);
     const [showQrCode, setShowQrCode] = useState(false);
@@ -138,25 +138,37 @@ export function Invoice() {
             };
             setInvoice(invoice);
             setAmount(invoice.amount);
-
-            const amount = invoice?.amount ?? 0;
-            const tax = invoice?.tax ?? 0
-
-            const total = amount + (amount * tax);
-            setTotal(total);
-
-            const feesOpenSpend = 0.129;
-            const feesStripe = 0.329;
-
-            const savings = (amount * feesStripe) - (amount * feesOpenSpend);
-            setSavings(savings);
-
             if (invoice.status === INVOICE_STATUS.DRAFT) {
                 generateQrCode(invoice.id);
             }
         })();
 
     }, [params?.invoiceId]);
+
+    const calcTotal = () => {
+        let tax = 0;
+        const taxes = (brand?.taxes || []).map(t => t.percent);
+        if (taxes && taxes.length > 0) {
+            tax = taxes.reduce((p, c) => p + c, 0);
+        }
+        const pamount = parseFloat(amount);
+        let total = pamount + (pamount * tax);
+        if (Number.isNaN(total)) {
+            total = 0;
+        }
+        return total;
+    };
+
+    const calcSavings = () => {
+        const pamount = parseFloat(amount);
+        const feesOpenSpend = 0.129;
+        const feesStripe = 0.329;
+        let savings = (pamount * feesStripe) - (pamount * feesOpenSpend);
+        if (Number.isNaN(savings)) {
+            savings = 0;
+        }
+        return savings;
+    };
 
     const createDraftInvoice = async (event) => {
         event.preventDefault();
@@ -171,9 +183,11 @@ export function Invoice() {
             return;
         }
 
-        let amountDecimal = amount;
+        let amountDecimal = 0;
         if (typeof amountDecimal === 'string') {
             amountDecimal = parseFloat(amount);
+        } else {
+            amountDecimal = amount;
         }
 
         if (!userObj.hasOwnProperty('balance') || userObj.balance < (amount * 0.129)) {
@@ -209,8 +223,9 @@ export function Invoice() {
             currency: brand?.currency || 'CAD',
             currencySymbol: brand?.currencySymbol || '$',
             amount: amountDecimal,
-            savings,
-            tax: parseFloat((amount * tax).toFixed(2)),
+            total: calcTotal(),
+            savings: calcSavings(),
+            tax: (amountDecimal * tax).toFixed(2),
             uniqueIdentifier,
             timestamp: Timestamp.now(),
             status: INVOICE_STATUS.DRAFT,
@@ -305,15 +320,15 @@ export function Invoice() {
                 {brand && brand?.taxes
                     ? <div class="mt-10 flex flex-col gap-3 px-2 text-3xl">
                         {brand?.taxes.map(t => <p key={`${t.name}-${amount}`} class="text-center">{t.name}: {brand.currencySymbol}{(amount * t.percent).toFixed(2)}</p>)}
-                        <p key={`total-${amount}`} class="text-center">Total: {brand?.currencySymbol || '$'}{total.toFixed(2)}</p>
+                        <p key={`total-${calcTotal(invoice)}`} class="text-center">Total: {brand?.currencySymbol || '$'}{calcTotal(invoice).toFixed(2)}</p>
                     </div>
                     : <div class="mt-10 flex flex-col gap-3 px-2 text-3xl">
-                        <p key={`total-${amount}`} class="text-center">Total: {brand?.currencySymbol || '$'}{total.toFixed(2)}</p>
+                        <p key={`total-${calcTotal(invoice)}`} class="text-center">Total: {brand?.currencySymbol || '$'}{calcTotal(invoice).toFixed(2)}</p>
                     </div>
                 }
 
                 <div class="mt-5 text-center text-xl text-green-600">
-                    <p class="">You will save <b>{brand?.currencySymbol || '$'}{savings.toFixed(2)}</b></p>
+                    <p key={`savings-${calcSavings(invoice)}`} class="">You will save <b>{brand?.currencySymbol || '$'}{calcSavings(invoice).toFixed(2)}</b></p>
                     <p class="text-xs">in payment processing fees.</p>
                 </div>
             </form>
