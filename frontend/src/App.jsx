@@ -10,6 +10,7 @@ import { Invoice } from './pages/Invoice';
 import { Pay } from './pages/Pay';
 import { Search } from './pages/Search';
 import { Settings } from './pages/Settings';
+import { RefundPolicy } from './pages/RefundPolicy';
 
 export default function App() {
     const [user, setUser] = useState(null);
@@ -38,6 +39,7 @@ export default function App() {
                     <Route path="/pay/:invoiceId" component={Pay} user={user} />
                     <Route path="/search" component={Search} user={user} />
                     <Route path="/settings" component={Settings} user={user} />
+                    <Route path="/refund-policy" component={RefundPolicy} user={user} />
                 </Router>
             </LocationProvider>
 

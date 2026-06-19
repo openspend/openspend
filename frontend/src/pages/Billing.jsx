@@ -137,8 +137,8 @@ export default function Billing() {
         <input name="amount" type="number" min="110" step="10" class="border-1 w-80 px-2 py-3" placeholder="Custom Amount ($1500)" onChange={e => setAmount(e.target.value)} />
         <button class="bg-blue-600 text-white text-lg border-1 px-8 py-3 rounded" onClick={e => createInvoice(amount)}>Create Invoice</button>
 
-        <p>All prices are in {brand?.currency || 'USD'}</p>
-        <p>Refund Policy: All transactions are final. Refund is not possible at the moment.</p>
+        <p class="text-lg">All prices are in {brand?.currency || 'USD'}</p>
+        <p class="text-lg">By creating and paying for the invoice, you agree to our <a href="/refund-policy" class="text-blue-600">cancellation and refund policy.</a></p>
 
         <div class="flex flex-col items-center gap-1">
             <p>What's your anticipated sales volume? (Optional)</p>
