@@ -56,7 +56,7 @@ export default function Home({ user }) {
 
                     <div className="flex flex-col gap-2 relative">
                         <div className="flex items-center justify-center bg-gray-200 text-green-400 font-mono text-sm rounded-lg shadow-lg p-6 overflow-x-auto">
-                            <img src="/assets/img/Screenshot1.png" width="75%" />
+                            <img src="/assets/img/Screenshot1.jpg" width="75%" />
                         </div>
                     </div>
                 </div>
