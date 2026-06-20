@@ -218,7 +218,7 @@ export function Invoice() {
 
         const formData = {
             brand: db.collection('brands').doc(brand.id),
-            name: brand?.name || 'CasaZero',
+            name: brand?.name || user?.name || '',
             email,
             currency: brand?.currency || 'CAD',
             currencySymbol: brand?.currencySymbol || '$',
