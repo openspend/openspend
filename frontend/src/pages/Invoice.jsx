@@ -161,8 +161,8 @@ export function Invoice() {
 
     const calcSavings = () => {
         const pamount = parseFloat(amount);
-        const feesOpenSpend = 0.129;
-        const feesStripe = 0.329;
+        const feesOpenSpend = 0.0129;
+        const feesStripe = 0.029;
         let savings = (pamount * feesStripe) - (pamount * feesOpenSpend);
         if (Number.isNaN(savings)) {
             savings = 0;
