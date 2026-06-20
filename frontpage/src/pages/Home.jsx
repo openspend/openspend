@@ -105,7 +105,7 @@ export default function Home({ user }) {
                             Pay-as-you-go
                         </h1>
                         <p className="mt-2 text-lg text-gray-600 max-w-lg">
-                            $0.0129 per dollar of invoice
+                            $0.015 per dollar of invoice
                         </p>
                         <p className="mt-2 text-lg text-gray-600 max-w-lg">
                             Volume pricing are available

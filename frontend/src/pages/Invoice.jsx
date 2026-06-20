@@ -161,9 +161,9 @@ export function Invoice() {
 
     const calcSavings = () => {
         const pamount = parseFloat(amount);
-        const feesOpenSpend = 0.0129;
+        const feesOpenSpend = 0.015;
         const feesStripe = 0.029;
-        let savings = (pamount * feesStripe) - (pamount * feesOpenSpend);
+        let savings = ((pamount * feesStripe) + 0.30) - (pamount * feesOpenSpend);
         if (Number.isNaN(savings)) {
             savings = 0;
         }
@@ -190,7 +190,7 @@ export function Invoice() {
             amountDecimal = amount;
         }
 
-        if (!userObj.hasOwnProperty('balance') || userObj.balance < (amount * 0.0129)) {
+        if (!userObj.hasOwnProperty('balance') || userObj.balance < (amount * 0.015)) {
             alert('Insufficient balance. Please add money to your account from billing\'s page');
             return;
         }
@@ -234,7 +234,7 @@ export function Invoice() {
         const invoiceDoc = await db.collection('invoices').add(formData);
         const invoiceId = invoiceDoc.id;
 
-        const newBalance = userObj.balance - (amount * 0.0129);
+        const newBalance = userObj.balance - (amount * 0.015);
         await db.collection('users').doc(user.id).set({ balance: newBalance }, { merge: true });
 
         if (typeof window !== 'undefined') {

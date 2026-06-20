@@ -145,7 +145,7 @@ export default function Billing() {
             <p class="text-xs md:text-sm lg:text-sm px-6">
                 For example, if your product costs $15 and you anticipate 25 items to be sold</p>
             <p class="text-xs md:text-sm lg:text-sm px-6">so your sales volume becomes 15 * 25 = 375</p>
-            <input type="string" class="border-1 w-80 px-2 py-3" onChange={e => setSuggestedBalance(e.target.value ? Math.ceil(parseFloat(e.target.value) * 0.0129) : '')} />
+            <input type="string" class="border-1 w-80 px-2 py-3" onChange={e => setSuggestedBalance(e.target.value ? Math.ceil(parseFloat(e.target.value) * 0.015) : '')} />
             <p>Suggested balance: {brand?.currencySymbol || '$'}{suggestedBalance}</p>
         </div>
 
