@@ -216,10 +216,10 @@ export function Pay() {
                     </p>
 
                     <div class="mt-4 relative flex items-center justify-center">
-                        <h2 class="text-3xl font-semibold">{invoice?.currencySymbol}{invoice?.amount + invoice?.tax} {invoice?.currency}</h2>
+                        <h2 class="text-3xl font-semibold">{invoice?.currencySymbol}{(invoice?.amount + invoice?.tax).toFixed(2)} {invoice?.currency}</h2>
                         <button class="absolute top-0 bottom-0 right-0 hover:bg-gray-300 rounded"
                             title="Copy Amount"
-                            onClick={e => copyToClipboard(e, invoice?.amount + invoice?.tax)}>
+                            onClick={e => copyToClipboard(e, (invoice?.amount + invoice?.tax).toFixed(2))}>
                             <MdCopyAll size={24} />
                         </button>
                     </div>
