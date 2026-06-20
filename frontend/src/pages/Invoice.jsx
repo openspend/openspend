@@ -225,7 +225,7 @@ export function Invoice() {
             amount: amountDecimal,
             total: calcTotal(),
             savings: calcSavings(),
-            tax: (amountDecimal * tax).toFixed(2),
+            tax: amountDecimal * tax,
             uniqueIdentifier,
             timestamp: Timestamp.now(),
             status: INVOICE_STATUS.DRAFT,
