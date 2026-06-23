@@ -173,12 +173,12 @@ export default function Users({ user }) {
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
-                                        <div class="h-2.5 w-2.5 rounded-full bg-success me-2"></div> {u?.createdAt && formatDateTime(u?.createdAt.toDate())}
+                                        <div class="h-2.5 w-2.5 rounded-full bg-success me-2"></div> {u?.createdAt?.toDate ? formatDateTime(u?.createdAt.toDate()) : u?.createdAt}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
-                                        <div class="h-2.5 w-2.5 rounded-full bg-success me-2"></div> {u?.updatedAt && formatDateTime(u?.updatedAt.toDate())}
+                                        <div class="h-2.5 w-2.5 rounded-full bg-success me-2"></div> {u?.updatedAt?.toDate ? formatDateTime(u?.updatedAt.toDate()) : u?.updatedAt}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
