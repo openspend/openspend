@@ -89,7 +89,7 @@ export function Search() {
             </form>
 
             {invoices && <div>
-                <div class="mt-10 mb-4 min-w-150 text-center grid grid-cols-4 border-b-1">
+                <div class="mt-10 mb-4 text-center grid grid-cols-4 border-b-1">
                     <div>
                         <p>Id</p>
                     </div>
@@ -103,7 +103,9 @@ export function Search() {
                         <p>Date Time</p>
                     </div>
                 </div>
-                {invoices.map(i => <div class="mt-2 min-w-150 text-center grid grid-cols-4">
+                {invoices.map(i => <a
+                    href={`/invoice/${i.id}`}
+                    class="mt-2 text-center grid grid-cols-4 cursor-pointer">
                     <div>
                         <p class="font-bold">{i?.uniqueIdentifier}</p>
                     </div>
@@ -116,7 +118,7 @@ export function Search() {
                     <div>
                         <p>{i?.timestamp && i?.timestamp.toDate().toString()}</p>
                     </div>
-                </div>)}
+                </a>)}
             </div>}
         </div>
     );
