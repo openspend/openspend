@@ -92,6 +92,12 @@ export function Settings() {
                 obj = { address: data };
             }
 
+            if (!obj.hasOwnProperty('uniqueIdentifier')) {
+                obj.uniqueIdentifier = false;
+            } else if (obj.uniqueIdentifier === 'on') {
+                obj.uniqueIdentifier = true;
+            }
+
             await db.collection('brands').doc(user.id).set(obj, { merge: true });
 
             setBrand({ ...brand, ...obj });
