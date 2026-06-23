@@ -36,12 +36,16 @@ export default function Users({ user }) {
                     .orderBy('createdAt', 'desc')
                     .get();
                 if (snapshot.size !== 0) {
-                    setUserObjs(snapshot.map(doc => {
+                    const userIds = [];
+                    const _userObjs = snapshot.map(doc => {
+                        userIds.push(doc.id);
                         return {
                             id: doc.id,
                             ...doc.data(),
                         };
-                    }));
+                    });
+                    const authUsers = users.filter(u => !userIds.includes(u.id));
+                    setUserObjs(_userObjs.concat(authUsers));
                 }
             } catch (err) {
             }
