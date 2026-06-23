@@ -44,13 +44,15 @@ export default function Home({ user }) {
                             Low-cost invoicing software for <span className="text-blue-600">creators, freelancers, popup shops</span> and <span className="text-blue-600">small businesses</span> with guided Zelle and Interac Canada integrations.
                         </p>
                         <p className="mt-6 text-2xl">
-                            Stripe 💔 | PayPal 💔 | OpenSpend ❤️
+                            Instant same-day payouts.
+                        </p>
+                        <p className="mt-6 text-2xl">
+                            Customers send money directly to your bank account.
                         </p>
 
                         <div className="mt-8 flex flex-col gap-2">
                             <a href="https://app.openspend.riamu.io" className="w-max bg-blue-600 text-4xl text-white px-6 py-3 rounded-md font-medium shadow hover:bg-blue-700 transition">Try for free</a>
                             <p class="text-3xl">No credit card required</p>
-                            <p class="text-xl">New users get $5</p>
                         </div>
                     </div>
 
