@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import { getSession } from './auth';
+import Leads from './pages/crm/Leads';
 import Users from './pages/authentication/Users';
 import Database from './pages/firestore/Database';
 import Files from './pages/storage/files';
@@ -31,6 +32,7 @@ export default function App() {
                         <Home path="/" user={user} />
                         <Dashboard path="/dashboard" user={user} />
                         <Login path="/login" user={user} />
+                        <Leads path="/project/0/crm/leads" user={user} />
                         <Users path="/project/0/authentication/users" user={user} />
                         <Database path="/project/0/firestore/databases/-default-/data" user={user} />
                         <Files path="/project/0/storage" user={user} />

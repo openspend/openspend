@@ -19,6 +19,10 @@ export default function Header({ user }) {
                     <span class="hidden md:inline">Postbase Admin</span>
                 </a>
                 <nav className="flex flex-col gap-2 text-sm font-medium">
+                    <a href="/project/0/crm/leads" className="hover:text-blue-600">
+                        <span class="md:hidden">CRM</span>
+                        <span class="hidden md:inline">CRM</span>
+                    </a>
                     <a href="/project/0/authentication/users" className="hover:text-blue-600">
                         <span class="md:hidden">Auth</span>
                         <span class="hidden md:inline">Authentication</span>
