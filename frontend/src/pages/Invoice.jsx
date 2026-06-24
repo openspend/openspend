@@ -238,7 +238,7 @@ export function Invoice() {
         await db.collection('users').doc(user.id).set({ balance: newBalance }, { merge: true });
 
         if (typeof window !== 'undefined') {
-            window.location.href = `/invoice/${invoiceId}`;
+            window.location.href = `/invoice/${invoiceId}#jump`;
         }
     };
 
@@ -285,7 +285,7 @@ export function Invoice() {
                 updatedOn: Timestamp.now(),
             }, { merge: true });
             if (typeof window !== 'undefined') {
-                window.location.href = `/invoice/${invoice.id}`;
+                window.location.href = `/invoice/${invoice.id}#jump`;
             }
         }
     };
@@ -317,19 +317,21 @@ export function Invoice() {
                     <p>Currency: <span class="font-bold">{brand?.currency || 'USD'}</span></p>
                 </div>
 
-                {brand && brand?.taxes
-                    ? <div class="mt-10 flex flex-col gap-3 px-2 text-3xl">
-                        {brand?.taxes.map(t => <p key={`${t.name}-${amount}`} class="text-center">{t.name}: {brand.currencySymbol}{(amount * t.percent).toFixed(2)}</p>)}
-                        <p key={`total-${calcTotal(invoice)}`} class="text-center">Total: {brand?.currencySymbol || '$'}{calcTotal(invoice).toFixed(2)}</p>
-                    </div>
-                    : <div class="mt-10 flex flex-col gap-3 px-2 text-3xl">
-                        <p key={`total-${calcTotal(invoice)}`} class="text-center">Total: {brand?.currencySymbol || '$'}{calcTotal(invoice).toFixed(2)}</p>
-                    </div>
-                }
+                <div id="jump">
+                    {brand && brand?.taxes
+                        ? <div class="mt-10 flex flex-col gap-3 px-2 text-3xl">
+                            {brand?.taxes.map(t => <p key={`${t.name}-${amount}`} class="text-center">{t.name}: {brand.currencySymbol}{(amount * t.percent).toFixed(2)}</p>)}
+                            <p key={`total-${calcTotal(invoice)}`} class="text-center">Total: {brand?.currencySymbol || '$'}{calcTotal(invoice).toFixed(2)}</p>
+                        </div>
+                        : <div class="mt-10 flex flex-col gap-3 px-2 text-3xl">
+                            <p key={`total-${calcTotal(invoice)}`} class="text-center">Total: {brand?.currencySymbol || '$'}{calcTotal(invoice).toFixed(2)}</p>
+                        </div>
+                    }
 
-                <div class="mt-5 text-center text-xl text-green-600">
-                    <p key={`savings-${calcSavings(invoice)}`} class="">You will save <b>{brand?.currencySymbol || '$'}{calcSavings(invoice).toFixed(2)}</b></p>
-                    <p class="text-xs">in payment processing fees.</p>
+                    <div class="mt-5 text-center text-xl text-green-600">
+                        <p key={`savings-${calcSavings(invoice)}`} class="">You will save <b>{brand?.currencySymbol || '$'}{calcSavings(invoice).toFixed(2)}</b></p>
+                        <p class="text-xs">in payment processing fees.</p>
+                    </div>
                 </div>
             </form>
 
