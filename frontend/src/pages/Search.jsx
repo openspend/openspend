@@ -89,7 +89,7 @@ export function Search() {
             </form>
 
             {invoices && <div>
-                <div class="mt-10 mb-4 text-center grid grid-cols-4 border-b-1">
+                <div class="mt-10 text-center grid grid-cols-4 border-b-1">
                     <div>
                         <p>Id</p>
                     </div>
@@ -105,7 +105,7 @@ export function Search() {
                 </div>
                 {invoices.map(i => <a
                     href={`/invoice/${i.id}`}
-                    class="mt-2 text-center grid grid-cols-4 cursor-pointer">
+                    class="py-2 text-center grid grid-cols-4 cursor-pointer hover:bg-gray-100 active:bg-gray-100">
                     <div>
                         <p class="font-bold">{i?.uniqueIdentifier}</p>
                     </div>
@@ -113,7 +113,7 @@ export function Search() {
                         <p>${i?.amount} + tax</p>
                     </div>
                     <div>
-                        <p>{i?.status === 'paid' ? 'Paid' : 'Draft'}</p>
+                        <p class={i?.status === 'paid' ? 'text-green-600' : 'text-red-600'}>{i?.status === 'paid' ? 'Paid' : 'Draft'}</p>
                     </div>
                     <div>
                         <p>{i?.timestamp && i?.timestamp.toDate().toString()}</p>
