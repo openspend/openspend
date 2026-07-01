@@ -164,7 +164,7 @@ export default function Home({ user }) {
             <section id="demo" className="bg-white pt-24 pb-32">
                 <div className="max-w-6xl mx-auto px-6 text-center">
                     <h2 className="text-3xl font-bold mb-12 text-gray-900">Schedule a Demo</h2>
-                    <form onSubmit={scheduleDemo} className="w-max m-auto grid grid-cols-2 gap-10 bg-gray-50 border rounded-lg p-8 shadow-sm hover:shadow transition">
+                    <form onSubmit={scheduleDemo} className="w-max m-auto grid grid-cols-1 md:grid-cols-2 gap-10 bg-gray-50 border rounded-lg p-8 shadow-sm hover:shadow transition">
                         {[
                             {
                                 name: "name",
