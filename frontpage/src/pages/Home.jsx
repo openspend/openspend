@@ -135,7 +135,7 @@ export default function Home({ user }) {
                     <div className="grid md:grid-cols-3 gap-10">
                         {[
                             {
-                                title: "Self Hosted",
+                                title: "Open Source",
                                 desc: "Based on mostly open source easily installable projects",
                                 icon: "🧩"
                             },
