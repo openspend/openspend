@@ -101,6 +101,10 @@ export default function AuthPanel({ user }) {
                             Login
                         </button>
                     </div>
+
+                    <div class="mt-5">
+                        <a href="/reset-password" class="text-blue-600 hover:underline">Forgot Password</a>
+                    </div>
                 </div>
             ) : (
                 <div className="mt-3">
