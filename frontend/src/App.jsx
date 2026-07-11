@@ -11,6 +11,8 @@ import { Pay } from './pages/Pay';
 import { Search } from './pages/Search';
 import { Settings } from './pages/Settings';
 import { RefundPolicy } from './pages/RefundPolicy';
+import ResetPassword from './pages/ResetPassword';
+import NewPassword from './pages/ResetPassword/newPassword';
 
 export default function App() {
     const [user, setUser] = useState(null);
@@ -32,6 +34,8 @@ export default function App() {
                 <Router>
                     <Route path="/" component={Home} user={user} />
                     <Route path="/login" component={Login} user={user} />
+                    <Route path="/reset-password" component={ResetPassword} />
+                    <Route path="/new-password" component={NewPassword} />
                     <Route path="/dashboard" component={Dashboard} user={user} />
                     <Route path="/billing" component={Billing} user={user} />
                     <Route path="/invoice" component={Invoice} user={user} />
