@@ -40,7 +40,7 @@ export default function AuthPanel({ user }) {
                 <div className="mt-3 space-y-3">
                     {/* <button onClick={loginWithGoogle} className="w-full bg-red-600 text-white py-2 rounded">Sign in with Google</button> */}
 
-                    <div className="flex flex-col md:flex-row gap-2">
+                    <div className="flex flex-row gap-2">
                         <input className="flex-1 border p-2 rounded w-full" type="text" placeholder="Email address" value={email} onInput={e => setEmail(e.target.value)} />
                         <input className="flex-1 border p-2 rounded w-full" type="password" placeholder="Password" value={password} onInput={e => setPassword(e.target.value)} />
                     </div>
