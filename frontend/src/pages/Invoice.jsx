@@ -199,13 +199,9 @@ export function Invoice() {
 
         let email = brand?.depositEmail;
 
-        if (brand?.currency === 'USD') {
-            // for US Zelle, skip adding code to email
-        } else {
-            if (email && (!brand.hasOwnProperty('uniqueIdentifier') || brand?.uniqueIdentifier)) {
-                let [emailUser, emailDomain] = email.split('@');
-                email = `${emailUser.toUpperCase()}+${uniqueIdentifier}@${emailDomain.toUpperCase()}`;
-            }
+        if (email && (!brand.hasOwnProperty('uniqueIdentifier') || brand?.uniqueIdentifier)) {
+            let [emailUser, emailDomain] = email.split('@');
+            email = `${emailUser.toUpperCase()}+${uniqueIdentifier}@${emailDomain.toUpperCase()}`;
         }
 
         const taxes = (brand?.taxes || []).map(t => t.percent);

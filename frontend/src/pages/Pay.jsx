@@ -10,6 +10,7 @@ export function Pay() {
     const { params } = useRoute();
     const [open, setOpen] = useState(false);
     const [user, setUser] = useState(null);
+    const [brand, setBrand] = useState(null);
     const [invoice, setInvoice] = useState({
         name: '',
         email: '',
@@ -43,7 +44,7 @@ export function Pay() {
 
         const unsub = db.collection('invoices')
             .where(documentId(), '==', params.invoiceId)
-            .onSnapshot(snapshot => {
+            .onSnapshot(async snapshot => {
                 if (snapshot.size > 0) {
                     const doc = snapshot.docs[0];
                     const invoice = {
@@ -51,6 +52,12 @@ export function Pay() {
                         ...doc.data(),
                     };
                     setInvoice(invoice);
+
+                    const brandDoc = await invoice.brand.get();
+                    setBrand({
+                        id: invoice.brand.id,
+                        ...brandDoc.data(),
+                    });
                 }
             });
 
@@ -248,7 +255,7 @@ export function Pay() {
                         </div>
                     </div>
 
-                    {invoice?.currency === 'USD'
+                    {!brand?.uniqueIdentifier
                         ? <div>
                             <div>
                                 <h3 class="mt-6 font-bold text-gray-500">Memo (Mandatory):</h3>
