@@ -258,7 +258,7 @@ export function Pay() {
                     {!brand?.uniqueIdentifier
                         ? <div>
                             <div>
-                                <h3 class="mt-6 font-bold text-gray-500">Memo (Mandatory):</h3>
+                                <h3 class="mt-6 font-bold text-gray-500">Note / Message / Memo (Mandatory):</h3>
                                 <div class="relative flex items-center justify gap-2">
                                     <p class="text-lg text-gray-700 font-bold w-full">Code: {invoice?.uniqueIdentifier}</p>
                                     <button class="absolute right-0 hover:bg-gray-300 rounded"
