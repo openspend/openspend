@@ -280,7 +280,7 @@ export function Settings() {
                     </div>
                     <label>
                         <p class="text-sm">
-                            <input name="uniqueIdentifier" type="checkbox" checked={false} /> Add unique identifier to email for each transaction (Enabled by default)
+                            <input name="uniqueIdentifier" type="checkbox" checked={false} /> Add unique identifier to email for each transaction (Disabled by default)
                         </p>
                         <p class="ml-5 text-xs">
                             OpenSpend adds <i>+unique_identifier</i> suffix to your email part before @ to uniquely identify each transaction.
