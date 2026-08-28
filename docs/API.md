@@ -17,7 +17,7 @@ const resp = await fetch('https://app.openspend.riamu.io/api/v1/invoice/new', {
 
 const data = await resp.json();
 
-if (resp.status === 200 && data.status === 'ok') {
+if (resp.ok && data.status === 'ok') {
     
     // data.invoice.id
 
